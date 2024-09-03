@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MemberList from '../components/MemberList';
 import MemberForm from '../components/MemberForm';
 import { Button } from '../components/ui/button';
@@ -6,10 +7,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { isAirtableConnected } from '../lib/airtable';
+import { useAuth } from '../context/AuthContext';
 
 const Index = () => {
   const [editingMember, setEditingMember] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleEdit = (member) => {
     setEditingMember(member);
@@ -21,11 +25,19 @@ const Index = () => {
     setIsDialogOpen(false);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   const airtableConnected = isAirtableConnected();
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Member Dashboard</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold">Member Dashboard</h1>
+        <Button onClick={handleLogout}>Logout</Button>
+      </div>
       {!airtableConnected && (
         <Alert variant="warning" className="mb-4">
           <AlertCircle className="h-4 w-4" />
