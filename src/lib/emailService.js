@@ -1,33 +1,28 @@
-import nodemailer from 'nodemailer';
-import { format } from 'date-fns';
 import { getMembers } from './airtable';
 
-const transporter = nodemailer.createTransport({
-  host: import.meta.env.VITE_EMAIL_HOST,
-  port: import.meta.env.VITE_EMAIL_PORT,
-  auth: {
-    user: import.meta.env.VITE_EMAIL_USER,
-    pass: import.meta.env.VITE_EMAIL_PASS,
-  },
-});
+// Mock email service for frontend
+const mockSendEmail = async (to, subject, content) => {
+  console.log(`Sending email to ${to}:`);
+  console.log(`Subject: ${subject}`);
+  console.log(`Content: ${content}`);
+  return new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+};
 
 export const sendBirthdayEmails = async () => {
   const members = await getMembers();
-  const today = format(new Date(), 'MM-dd');
+  const today = new Date().toISOString().slice(5, 10); // MM-DD format
 
   const birthdayMembers = members.filter(member => {
-    const birthday = new Date(member.Birthday);
-    return format(birthday, 'MM-dd') === today;
+    const birthday = new Date(member.Birthday).toISOString().slice(5, 10);
+    return birthday === today;
   });
 
   for (const member of birthdayMembers) {
-    await transporter.sendMail({
-      from: '"Your Organization" <noreply@yourorg.com>',
-      to: member.Email,
-      subject: 'Happy Birthday!',
-      text: `Happy Birthday, ${member.Name}! We hope you have a fantastic day.`,
-      html: `<p>Happy Birthday, <strong>${member.Name}</strong>!</p><p>We hope you have a fantastic day.</p>`,
-    });
+    await mockSendEmail(
+      member.Email,
+      'Happy Birthday!',
+      `Happy Birthday, ${member.Name}! We hope you have a fantastic day.`
+    );
   }
 };
 
@@ -35,12 +30,10 @@ export const sendManualEmail = async (emailData) => {
   const members = await getMembers();
   
   for (const member of members) {
-    await transporter.sendMail({
-      from: '"Your Organization" <noreply@yourorg.com>',
-      to: member.Email,
-      subject: emailData.subject,
-      text: emailData.content,
-      html: `<div>${emailData.content}</div>`,
-    });
+    await mockSendEmail(
+      member.Email,
+      emailData.subject,
+      emailData.content
+    );
   }
 };
