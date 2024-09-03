@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import MemberList from '../components/MemberList';
 import MemberForm from '../components/MemberForm';
+import EmailModal from '../components/EmailModal';
 import { Button } from '../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { isAirtableConnected } from '../lib/airtable';
+import { sendManualEmail } from '../lib/emailService';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [editingMember, setEditingMember] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const handleEdit = (member) => {
     setEditingMember(member);
@@ -19,6 +23,16 @@ const Index = () => {
   const handleClose = () => {
     setEditingMember(null);
     setIsDialogOpen(false);
+  };
+
+  const handleSendEmail = async (emailData) => {
+    try {
+      await sendManualEmail(emailData);
+      toast.success('Email sent successfully');
+    } catch (error) {
+      toast.error('Failed to send email');
+      console.error('Error sending email:', error);
+    }
   };
 
   const airtableConnected = isAirtableConnected();
@@ -35,19 +49,32 @@ const Index = () => {
           </AlertDescription>
         </Alert>
       )}
-      {airtableConnected && (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <div className="flex justify-between mb-4">
+        {airtableConnected && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>Add New Member</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
+              </DialogHeader>
+              <MemberForm member={editingMember} onClose={handleClose} />
+            </DialogContent>
+          </Dialog>
+        )}
+        <Dialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
           <DialogTrigger asChild>
-            <Button className="mb-4">Add New Member</Button>
+            <Button>Send Manual Email</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
+              <DialogTitle>Send Manual Email</DialogTitle>
             </DialogHeader>
-            <MemberForm member={editingMember} onClose={handleClose} />
+            <EmailModal onClose={() => setIsEmailModalOpen(false)} onSend={handleSendEmail} />
           </DialogContent>
         </Dialog>
-      )}
+      </div>
       <MemberList onEdit={handleEdit} />
     </div>
   );
