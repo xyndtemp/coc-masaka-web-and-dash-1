@@ -35,7 +35,10 @@ const Index = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">Member Dashboard</h1>
+        <div>
+          <h1 className="text-3xl font-bold">GreenField Member Contact System</h1>
+          <h2 className="text-xl text-gray-600">Member Dashboard</h2>
+        </div>
         <Button onClick={handleLogout}>Logout</Button>
       </div>
       {!airtableConnected && (
