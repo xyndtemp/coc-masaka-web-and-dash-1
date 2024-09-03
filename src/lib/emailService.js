@@ -30,3 +30,17 @@ export const sendBirthdayEmails = async () => {
     });
   }
 };
+
+export const sendManualEmail = async (emailData) => {
+  const members = await getMembers();
+  
+  for (const member of members) {
+    await transporter.sendMail({
+      from: '"Your Organization" <noreply@yourorg.com>',
+      to: member.Email,
+      subject: emailData.subject,
+      text: emailData.content,
+      html: `<div>${emailData.content}</div>`,
+    });
+  }
+};
