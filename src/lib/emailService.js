@@ -26,14 +26,6 @@ export const sendBirthdayEmails = async () => {
   }
 };
 
-export const sendManualEmail = async (emailData) => {
-  const members = await getMembers();
-  
-  for (const member of members) {
-    await mockSendEmail(
-      member.Email,
-      emailData.subject,
-      emailData.content
-    );
-  }
+export const sendManualEmail = async ({ to, subject, content }) => {
+  await mockSendEmail(to, subject, content);
 };

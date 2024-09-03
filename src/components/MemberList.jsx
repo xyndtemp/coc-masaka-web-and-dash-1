@@ -6,7 +6,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from './ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import MemberForm from './MemberForm';
+import EmailModal from './EmailModal';
 import { format, isToday } from 'date-fns';
+import { sendManualEmail } from '../lib/emailService';
+import { toast } from 'sonner';
 
 const MemberList = ({ onEdit }) => {
   const queryClient = useQueryClient();
@@ -14,6 +17,8 @@ const MemberList = ({ onEdit }) => {
   const [editingMember, setEditingMember] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [deletingMember, setDeletingMember] = useState(null);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [emailRecipient, setEmailRecipient] = useState(null);
 
   const deleteMutation = useMutation({
     mutationFn: deleteMember,
@@ -43,6 +48,26 @@ const MemberList = ({ onEdit }) => {
     setIsEditDialogOpen(false);
   };
 
+  const handleSendEmail = (member) => {
+    setEmailRecipient(member);
+    setIsEmailModalOpen(true);
+  };
+
+  const handleEmailSend = async (emailData) => {
+    try {
+      await sendManualEmail({
+        to: emailRecipient.Email,
+        subject: emailData.subject,
+        content: emailData.content
+      });
+      toast.success('Email sent successfully');
+      setIsEmailModalOpen(false);
+    } catch (error) {
+      toast.error('Failed to send email');
+      console.error('Error sending email:', error);
+    }
+  };
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
@@ -66,6 +91,7 @@ const MemberList = ({ onEdit }) => {
                 <TableCell>{format(new Date(member.Birthday), 'MMM dd, yyyy')}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
+                  <Button onClick={() => handleSendEmail(member)} variant="outline" className="mr-2">Send Email</Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive">Delete</Button>
@@ -96,6 +122,15 @@ const MemberList = ({ onEdit }) => {
             <DialogTitle>Edit Member</DialogTitle>
           </DialogHeader>
           <MemberForm member={editingMember} onClose={closeEditDialog} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Send Email to {emailRecipient?.Name}</DialogTitle>
+          </DialogHeader>
+          <EmailModal onClose={() => setIsEmailModalOpen(false)} onSend={handleEmailSend} />
         </DialogContent>
       </Dialog>
     </>
