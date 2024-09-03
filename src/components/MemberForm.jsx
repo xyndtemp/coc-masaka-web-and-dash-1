@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createMember, updateMember } from '../lib/airtable';
 import { Button } from './ui/button';
@@ -8,8 +8,12 @@ import { Form, FormField, FormItem, FormLabel, FormControl } from './ui/form';
 
 const MemberForm = ({ member, onClose }) => {
   const queryClient = useQueryClient();
-  const { register, handleSubmit } = useForm({
-    defaultValues: member || {},
+  const methods = useForm({
+    defaultValues: member || {
+      Name: '',
+      Email: '',
+      Birthday: '',
+    },
   });
 
   const mutation = useMutation({
@@ -29,35 +33,49 @@ const MemberForm = ({ member, onClose }) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <FormField>
-        <FormItem>
-          <FormLabel>Name</FormLabel>
-          <FormControl>
-            <Input {...register('Name')} />
-          </FormControl>
-        </FormItem>
-      </FormField>
-      <FormField>
-        <FormItem>
-          <FormLabel>Email</FormLabel>
-          <FormControl>
-            <Input {...register('Email')} type="email" />
-          </FormControl>
-        </FormItem>
-      </FormField>
-      <FormField>
-        <FormItem>
-          <FormLabel>Birthday</FormLabel>
-          <FormControl>
-            <Input {...register('Birthday')} type="date" />
-          </FormControl>
-        </FormItem>
-      </FormField>
-      <Button type="submit" className="mt-4">
-        {member ? 'Update' : 'Create'} Member
-      </Button>
-    </Form>
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <FormField
+          control={methods.control}
+          name="Name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={methods.control}
+          name="Email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input {...field} type="email" />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={methods.control}
+          name="Birthday"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Birthday</FormLabel>
+              <FormControl>
+                <Input {...field} type="date" />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="mt-4">
+          {member ? 'Update' : 'Create'} Member
+        </Button>
+      </form>
+    </FormProvider>
   );
 };
 
