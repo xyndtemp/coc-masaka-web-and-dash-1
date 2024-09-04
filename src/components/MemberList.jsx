@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getMembers, deleteMember, updateMember } from '../lib/airtable';
+import { getMembers, deleteMember, updateMember, createMember } from '../lib/airtable';
 import { Button } from './ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
@@ -40,7 +40,7 @@ const MemberList = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: updateMember,
+    mutationFn: (data) => updateMember(data.id, { fields: data.fields }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] });
       toast.success('Member updated successfully');
@@ -48,6 +48,18 @@ const MemberList = () => {
     },
     onError: (error) => {
       toast.error(`Error updating member: ${error.message}`);
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data) => createMember({ fields: data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+      toast.success('Member created successfully');
+      setIsEditDialogOpen(false);
+    },
+    onError: (error) => {
+      toast.error(`Error creating member: ${error.message}`);
     },
   });
 
@@ -61,7 +73,11 @@ const MemberList = () => {
   };
 
   const handleUpdate = (data) => {
-    updateMutation.mutate([editingMember.id, data]);
+    if (editingMember) {
+      updateMutation.mutate({ id: editingMember.id, fields: data });
+    } else {
+      createMutation.mutate(data);
+    }
   };
 
   const handleSendEmail = (member) => {
@@ -72,7 +88,7 @@ const MemberList = () => {
   const handleEmailSend = async (emailData) => {
     try {
       await sendManualEmail({
-        to: emailRecipient.Email,
+        to: emailRecipient.email,
         subject: emailData.subject,
         content: emailData.content
       });
@@ -89,7 +105,7 @@ const MemberList = () => {
       for (const memberId of selectedMembers) {
         const member = members.find(m => m.id === memberId);
         await sendManualEmail({
-          to: member.Email,
+          to: member.email,
           subject: emailData.subject,
           content: emailData.content
         });
@@ -146,7 +162,7 @@ const MemberList = () => {
                   />
                 </TableCell>
                 <TableCell>{member.Name || 'N/A'}</TableCell>
-                <TableCell>{member.Email || 'N/A'}</TableCell>
+                <TableCell>{member.email || 'N/A'}</TableCell>
                 <TableCell>{member.Birthday ? format(parseISO(member.Birthday), 'MMM dd, yyyy') : 'N/A'}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
@@ -178,7 +194,7 @@ const MemberList = () => {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Member</DialogTitle>
+            <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
           </DialogHeader>
           <MemberForm member={editingMember} onClose={() => setIsEditDialogOpen(false)} onSubmit={handleUpdate} />
         </DialogContent>

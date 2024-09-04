@@ -1,40 +1,25 @@
 import React from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createMember, updateMember } from '../lib/airtable';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Form, FormField, FormItem, FormLabel, FormControl } from './ui/form';
 
-const MemberForm = ({ member, onClose }) => {
-  const queryClient = useQueryClient();
+const MemberForm = ({ member, onClose, onSubmit }) => {
   const methods = useForm({
     defaultValues: member || {
       Name: '',
-      Email: '',
+      email: '', // Changed from Email to email
       Birthday: '',
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: member ? updateMember : createMember,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      onClose();
-    },
-  });
-
-  const onSubmit = (data) => {
-    if (member) {
-      mutation.mutate([member.id, data]);
-    } else {
-      mutation.mutate(data);
-    }
+  const handleSubmit = (data) => {
+    onSubmit(data);
   };
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <form onSubmit={methods.handleSubmit(handleSubmit)}>
         <FormField
           control={methods.control}
           name="Name"
@@ -49,7 +34,7 @@ const MemberForm = ({ member, onClose }) => {
         />
         <FormField
           control={methods.control}
-          name="Email"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
