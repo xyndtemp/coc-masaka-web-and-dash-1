@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MemberList from '../components/MemberList';
 import MemberForm from '../components/MemberForm';
+import SEOHead from '../components/SEOHead';
 import { Button } from '../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
@@ -39,45 +40,52 @@ const Index = () => {
   const airtableConnected = isAirtableConnected();
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <h1 className="text-3xl font-bold">GreenField Member Contact System</h1>
-          <h2 className="text-xl text-gray-600 dark:text-gray-400">Member Dashboard</h2>
+    <>
+      <SEOHead
+        title="GreenField Member Dashboard"
+        description="Manage GreenField members, track birthdays, and send communications efficiently."
+        canonicalUrl="https://www.greenfield-org.com/dashboard"
+      />
+      <div className="container mx-auto p-4">
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-3xl font-bold">GreenField Member Contact System</h1>
+            <h2 className="text-xl text-gray-600 dark:text-gray-400">Member Dashboard</h2>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button onClick={toggleTheme} variant="outline" size="icon">
+              {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+            </Button>
+            <Button onClick={handleLogout}>Logout</Button>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button onClick={toggleTheme} variant="outline" size="icon">
-            {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
-          </Button>
-          <Button onClick={handleLogout}>Logout</Button>
-        </div>
-      </div>
-      {!airtableConnected && (
-        <Alert variant="warning" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Warning</AlertTitle>
-          <AlertDescription>
-            Airtable is not connected. Using test data. CRUD operations are disabled.
-          </AlertDescription>
-        </Alert>
-      )}
-      <div className="mb-4">
-        {airtableConnected && (
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>Add New Member</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
-              </DialogHeader>
-              <MemberForm member={editingMember} onClose={handleClose} />
-            </DialogContent>
-          </Dialog>
+        {!airtableConnected && (
+          <Alert variant="warning" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Warning</AlertTitle>
+            <AlertDescription>
+              Airtable is not connected. Using test data. CRUD operations are disabled.
+            </AlertDescription>
+          </Alert>
         )}
+        <div className="mb-4">
+          {airtableConnected && (
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>Add New Member</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>{editingMember ? 'Edit Member' : 'Add New Member'}</DialogTitle>
+                </DialogHeader>
+                <MemberForm member={editingMember} onClose={handleClose} />
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
+        <MemberList onEdit={handleEdit} />
       </div>
-      <MemberList onEdit={handleEdit} />
-    </div>
+    </>
   );
 };
 
