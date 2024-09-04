@@ -3,19 +3,24 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMembers, deleteMember } from '../lib/airtable';
 import { Button } from './ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { Checkbox } from './ui/checkbox';
 import MemberForm from './MemberForm';
 import EmailModal from './EmailModal';
 import BulkEmailModal from './BulkEmailModal';
-import { format, isToday } from 'date-fns';
+import { format, isToday, parseISO } from 'date-fns';
 import { sendManualEmail } from '../lib/emailService';
 import { toast } from 'sonner';
+import { Alert, AlertDescription } from './ui/alert';
 
 const MemberList = ({ onEdit }) => {
   const queryClient = useQueryClient();
-  const { data: members, isLoading } = useQuery({ queryKey: ['members'], queryFn: getMembers });
+  const { data: members, isLoading, error } = useQuery({ 
+    queryKey: ['members'], 
+    queryFn: getMembers,
+    retry: 3,
+  });
   const [editingMember, setEditingMember] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [deletingMember, setDeletingMember] = useState(null);
@@ -100,6 +105,7 @@ const MemberList = ({ onEdit }) => {
   };
 
   if (isLoading) return <div>Loading...</div>;
+  if (error) return <Alert variant="destructive"><AlertDescription>Error loading members: {error.message}</AlertDescription></Alert>;
 
   return (
     <>
@@ -122,8 +128,8 @@ const MemberList = ({ onEdit }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {members.map((member) => {
-            const isBirthday = isToday(new Date(member.Birthday));
+          {members && members.map((member) => {
+            const isBirthday = member.Birthday ? isToday(parseISO(member.Birthday)) : false;
             return (
               <TableRow key={member.id} className={isBirthday ? 'bg-yellow-100' : ''}>
                 <TableCell>
@@ -132,9 +138,9 @@ const MemberList = ({ onEdit }) => {
                     onCheckedChange={() => handleCheckboxChange(member.id)}
                   />
                 </TableCell>
-                <TableCell>{member.Name}</TableCell>
-                <TableCell>{member.Email}</TableCell>
-                <TableCell>{format(new Date(member.Birthday), 'MMM dd, yyyy')}</TableCell>
+                <TableCell>{member.Name || 'N/A'}</TableCell>
+                <TableCell>{member.Email || 'N/A'}</TableCell>
+                <TableCell>{member.Birthday ? format(parseISO(member.Birthday), 'MMM dd, yyyy') : 'N/A'}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
                   <Button onClick={() => handleSendEmail(member)} variant="outline" className="mr-2">Send Email</Button>
