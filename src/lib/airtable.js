@@ -21,11 +21,19 @@ export const getMembers = async () => {
     return testUsers;
   }
 
-  const records = await table.select().all();
-  return records.map(record => ({
-    id: record.id,
-    ...record.fields
-  }));
+  try {
+    const records = await table.select().all();
+    return records.map(record => ({
+      id: record.id,
+      Name: record.fields.Name || '',
+      Email: record.fields.Email || '',
+      Birthday: record.fields.Birthday || '',
+      createdTime: record.createdTime
+    }));
+  } catch (error) {
+    console.error('Error fetching members from Airtable:', error);
+    return [];
+  }
 };
 
 export const createMember = async (data) => {
