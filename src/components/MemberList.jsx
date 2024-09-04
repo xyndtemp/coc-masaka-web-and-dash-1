@@ -5,8 +5,10 @@ import { Button } from './ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from './ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
+import { Checkbox } from './ui/checkbox';
 import MemberForm from './MemberForm';
 import EmailModal from './EmailModal';
+import BulkEmailModal from './BulkEmailModal';
 import { format, isToday } from 'date-fns';
 import { sendManualEmail } from '../lib/emailService';
 import { toast } from 'sonner';
@@ -18,7 +20,9 @@ const MemberList = ({ onEdit }) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [deletingMember, setDeletingMember] = useState(null);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [isBulkEmailModalOpen, setIsBulkEmailModalOpen] = useState(false);
   const [emailRecipient, setEmailRecipient] = useState(null);
+  const [selectedMembers, setSelectedMembers] = useState([]);
 
   const deleteMutation = useMutation({
     mutationFn: deleteMember,
@@ -68,13 +72,49 @@ const MemberList = ({ onEdit }) => {
     }
   };
 
+  const handleBulkEmailSend = async (emailData) => {
+    try {
+      for (const memberId of selectedMembers) {
+        const member = members.find(m => m.id === memberId);
+        await sendManualEmail({
+          to: member.Email,
+          subject: emailData.subject,
+          content: emailData.content
+        });
+      }
+      toast.success('Bulk emails sent successfully');
+      setIsBulkEmailModalOpen(false);
+      setSelectedMembers([]);
+    } catch (error) {
+      toast.error('Failed to send bulk emails');
+      console.error('Error sending bulk emails:', error);
+    }
+  };
+
+  const handleCheckboxChange = (memberId) => {
+    setSelectedMembers(prev =>
+      prev.includes(memberId)
+        ? prev.filter(id => id !== memberId)
+        : [...prev, memberId]
+    );
+  };
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <>
+      <div className="mb-4 flex justify-between items-center">
+        <Button
+          onClick={() => setIsBulkEmailModalOpen(true)}
+          disabled={selectedMembers.length === 0}
+        >
+          Send Bulk Email ({selectedMembers.length})
+        </Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[50px]">Select</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Birthday</TableHead>
@@ -86,6 +126,12 @@ const MemberList = ({ onEdit }) => {
             const isBirthday = isToday(new Date(member.Birthday));
             return (
               <TableRow key={member.id} className={isBirthday ? 'bg-yellow-100' : ''}>
+                <TableCell>
+                  <Checkbox
+                    checked={selectedMembers.includes(member.id)}
+                    onCheckedChange={() => handleCheckboxChange(member.id)}
+                  />
+                </TableCell>
                 <TableCell>{member.Name}</TableCell>
                 <TableCell>{member.Email}</TableCell>
                 <TableCell>{format(new Date(member.Birthday), 'MMM dd, yyyy')}</TableCell>
@@ -131,6 +177,15 @@ const MemberList = ({ onEdit }) => {
             <DialogTitle>Send Email to {emailRecipient?.Name}</DialogTitle>
           </DialogHeader>
           <EmailModal onClose={() => setIsEmailModalOpen(false)} onSend={handleEmailSend} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isBulkEmailModalOpen} onOpenChange={setIsBulkEmailModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Send Bulk Email</DialogTitle>
+          </DialogHeader>
+          <BulkEmailModal onClose={() => setIsBulkEmailModalOpen(false)} onSend={handleBulkEmailSend} />
         </DialogContent>
       </Dialog>
     </>
