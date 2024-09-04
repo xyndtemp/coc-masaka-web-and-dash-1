@@ -26,7 +26,7 @@ export const getMembers = async () => {
     return records.map(record => ({
       id: record.id,
       Name: record.fields.Name || '',
-      Email: record.fields.Email || '',
+      Email: record.fields.email || '', // Note: 'email' is lowercase in the Airtable data
       Birthday: record.fields.Birthday || '',
       createdTime: record.createdTime
     }));
