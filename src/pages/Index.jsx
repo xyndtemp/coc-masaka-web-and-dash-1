@@ -5,15 +5,17 @@ import MemberForm from '../components/MemberForm';
 import { Button } from '../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Moon, Sun } from 'lucide-react';
 import { isAirtableConnected } from '../lib/airtable';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from 'next-themes';
 
 const Index = () => {
   const [editingMember, setEditingMember] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
 
   const handleEdit = (member) => {
     setEditingMember(member);
@@ -30,6 +32,10 @@ const Index = () => {
     navigate('/login');
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   const airtableConnected = isAirtableConnected();
 
   return (
@@ -37,9 +43,14 @@ const Index = () => {
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-3xl font-bold">GreenField Member Contact System</h1>
-          <h2 className="text-xl text-gray-600">Member Dashboard</h2>
+          <h2 className="text-xl text-gray-600 dark:text-gray-400">Member Dashboard</h2>
         </div>
-        <Button onClick={handleLogout}>Logout</Button>
+        <div className="flex items-center space-x-2">
+          <Button onClick={toggleTheme} variant="outline" size="icon">
+            {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+          </Button>
+          <Button onClick={handleLogout}>Logout</Button>
+        </div>
       </div>
       {!airtableConnected && (
         <Alert variant="warning" className="mb-4">
