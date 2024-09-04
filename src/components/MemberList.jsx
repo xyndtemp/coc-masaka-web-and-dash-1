@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getMembers, deleteMember } from '../lib/airtable';
+import { getMembers, deleteMember, updateMember } from '../lib/airtable';
 import { Button } from './ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { Checkbox } from './ui/checkbox';
 import MemberForm from './MemberForm';
@@ -14,7 +14,7 @@ import { sendManualEmail } from '../lib/emailService';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from './ui/alert';
 
-const MemberList = ({ onEdit }) => {
+const MemberList = () => {
   const queryClient = useQueryClient();
   const { data: members, isLoading, error } = useQuery({ 
     queryKey: ['members'], 
@@ -23,7 +23,6 @@ const MemberList = ({ onEdit }) => {
   });
   const [editingMember, setEditingMember] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [deletingMember, setDeletingMember] = useState(null);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isBulkEmailModalOpen, setIsBulkEmailModalOpen] = useState(false);
   const [emailRecipient, setEmailRecipient] = useState(null);
@@ -33,6 +32,22 @@ const MemberList = ({ onEdit }) => {
     mutationFn: deleteMember,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] });
+      toast.success('Member deleted successfully');
+    },
+    onError: (error) => {
+      toast.error(`Error deleting member: ${error.message}`);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['members'] });
+      toast.success('Member updated successfully');
+      setIsEditDialogOpen(false);
+    },
+    onError: (error) => {
+      toast.error(`Error updating member: ${error.message}`);
     },
   });
 
@@ -41,20 +56,12 @@ const MemberList = ({ onEdit }) => {
     setIsEditDialogOpen(true);
   };
 
-  const handleDelete = (member) => {
-    setDeletingMember(member);
+  const handleDelete = (id) => {
+    deleteMutation.mutate(id);
   };
 
-  const confirmDelete = () => {
-    if (deletingMember) {
-      deleteMutation.mutate(deletingMember.id);
-      setDeletingMember(null);
-    }
-  };
-
-  const closeEditDialog = () => {
-    setEditingMember(null);
-    setIsEditDialogOpen(false);
+  const handleUpdate = (data) => {
+    updateMutation.mutate([editingMember.id, data]);
   };
 
   const handleSendEmail = (member) => {
@@ -157,7 +164,7 @@ const MemberList = ({ onEdit }) => {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => deleteMutation.mutate(member.id)}>Delete</AlertDialogAction>
+                        <AlertDialogAction onClick={() => handleDelete(member.id)}>Delete</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
@@ -173,7 +180,7 @@ const MemberList = ({ onEdit }) => {
           <DialogHeader>
             <DialogTitle>Edit Member</DialogTitle>
           </DialogHeader>
-          <MemberForm member={editingMember} onClose={closeEditDialog} />
+          <MemberForm member={editingMember} onClose={() => setIsEditDialogOpen(false)} onSubmit={handleUpdate} />
         </DialogContent>
       </Dialog>
 
