@@ -2,8 +2,9 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
 import { Form, FormField, FormItem, FormLabel, FormControl } from './ui/form';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const BulkEmailModal = ({ onClose, onSend }) => {
   const form = useForm({
@@ -40,7 +41,9 @@ const BulkEmailModal = ({ onClose, onSend }) => {
             <FormItem>
               <FormLabel>Content</FormLabel>
               <FormControl>
-                <Textarea {...field} placeholder="Email content" rows={10} />
+                <div className="h-[300px] overflow-y-auto">
+                  <ReactQuill theme="snow" {...field} />
+                </div>
               </FormControl>
             </FormItem>
           )}

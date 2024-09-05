@@ -135,6 +135,14 @@ const MemberList = () => {
     );
   };
 
+  const handleSelectAll = (event) => {
+    if (event.target.checked) {
+      setSelectedMembers(members.map(member => member.id));
+    } else {
+      setSelectedMembers([]);
+    }
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <Alert variant="destructive"><AlertDescription>Error loading members: {error.message}</AlertDescription></Alert>;
 
@@ -151,7 +159,12 @@ const MemberList = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[50px]">Select</TableHead>
+            <TableHead className="w-[50px]">
+              <Checkbox
+                checked={selectedMembers.length === members.length}
+                onCheckedChange={handleSelectAll}
+              />
+            </TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Birthday</TableHead>
@@ -215,7 +228,7 @@ const MemberList = () => {
       </Dialog>
 
       <Dialog open={isBulkEmailModalOpen} onOpenChange={setIsBulkEmailModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Send Bulk Email</DialogTitle>
           </DialogHeader>
