@@ -1,19 +1,21 @@
-import nodemailer from 'nodemailer';
+// Note: This is a mock implementation for frontend use.
+// For actual email sending, this should be implemented on the backend.
 
-const transporter = nodemailer.createTransport({
-  host: import.meta.env.VITE_CPANEL_SMTP_HOST,
-  port: import.meta.env.VITE_CPANEL_SMTP_PORT,
-  secure: true,
-  auth: {
-    user: import.meta.env.VITE_CPANEL_EMAIL,
-    pass: import.meta.env.VITE_CPANEL_EMAIL_PASSWORD,
-  },
-});
+const mockTransporter = {
+  sendMail: ({ from, to, subject, html }) => {
+    console.log('Mock email sent:');
+    console.log(`From: ${from}`);
+    console.log(`To: ${to}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`HTML Content: ${html}`);
+    return Promise.resolve({ messageId: 'mock-message-id' });
+  }
+};
 
 export const sendEmail = async ({ to, subject, html }) => {
   try {
-    const info = await transporter.sendMail({
-      from: import.meta.env.VITE_CPANEL_EMAIL,
+    const info = await mockTransporter.sendMail({
+      from: 'noreply@example.com', // Replace with your actual email
       to,
       subject,
       html,
@@ -51,10 +53,41 @@ export const generateEmailTemplate = (content) => {
           ${content}
         </div>
         <div class="footer">
-          <p>© 2023 GreenField Organization. All rights reserved.</p>
+          <p>© ${new Date().getFullYear()} GreenField Organization. All rights reserved.</p>
         </div>
       </div>
     </body>
     </html>
   `;
 };
+
+// Backend implementation (commented out):
+/*
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  host: process.env.CPANEL_SMTP_HOST,
+  port: process.env.CPANEL_SMTP_PORT,
+  secure: true,
+  auth: {
+    user: process.env.CPANEL_EMAIL,
+    pass: process.env.CPANEL_EMAIL_PASSWORD,
+  },
+});
+
+export const sendEmail = async ({ to, subject, html }) => {
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.CPANEL_EMAIL,
+      to,
+      subject,
+      html,
+    });
+    console.log('Email sent: ', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
+  }
+};
+*/
