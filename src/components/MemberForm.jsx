@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Form, FormField, FormItem, FormLabel, FormControl } from './ui/form';
+import { toast } from 'sonner';
 
 const MemberForm = ({ member, onClose, onSubmit }) => {
   const methods = useForm({
@@ -17,13 +18,12 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     try {
       if (onSubmit) {
         await onSubmit(data);
+        toast.success('Member saved successfully');
+        if (onClose) onClose();
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-    } finally {
-      if (onClose) {
-        onClose();
-      }
+      toast.error('Failed to save member');
     }
   };
 

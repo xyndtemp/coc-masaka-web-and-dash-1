@@ -39,7 +39,8 @@ const MemberList = () => {
         toast.success('Member deleted successfully');
       },
       onError: (error) => {
-        toast.error(`Error deleting member: ${error.message}`);
+        console.error('Error deleting member:', error);
+        toast.error('Failed to delete member');
       },
     }),
     update: useMutation({
@@ -50,7 +51,8 @@ const MemberList = () => {
         setIsEditDialogOpen(false);
       },
       onError: (error) => {
-        toast.error(`Error updating member: ${error.message}`);
+        console.error('Error updating member:', error);
+        toast.error('Failed to update member');
       },
     }),
     create: useMutation({
@@ -61,7 +63,8 @@ const MemberList = () => {
         setIsEditDialogOpen(false);
       },
       onError: (error) => {
-        toast.error(`Error creating member: ${error.message}`);
+        console.error('Error creating member:', error);
+        toast.error('Failed to create member');
       },
     }),
   };
@@ -99,8 +102,8 @@ const MemberList = () => {
       toast.success('Email sent successfully');
       setIsEmailModalOpen(false);
     } catch (error) {
-      toast.error('Failed to send email');
       console.error('Error sending email:', error);
+      toast.error('Failed to send email');
     }
   };
 
@@ -119,8 +122,8 @@ const MemberList = () => {
       setIsBulkEmailModalOpen(false);
       setSelectedMembers([]);
     } catch (error) {
-      toast.error('Failed to send bulk emails');
       console.error('Error sending bulk emails:', error);
+      toast.error('Failed to send bulk emails');
     }
   };
 
