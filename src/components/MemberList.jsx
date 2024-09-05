@@ -31,40 +31,40 @@ const MemberList = () => {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const { useMockEmail } = useAuth();
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteMember,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      toast.success('Member deleted successfully');
-    },
-    onError: (error) => {
-      toast.error(`Error deleting member: ${error.message}`);
-    },
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: (data) => updateMember(data.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      toast.success('Member updated successfully');
-      setIsEditDialogOpen(false);
-    },
-    onError: (error) => {
-      toast.error(`Error updating member: ${error.message}`);
-    },
-  });
-
-  const createMutation = useMutation({
-    mutationFn: createMember,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      toast.success('Member created successfully');
-      setIsEditDialogOpen(false);
-    },
-    onError: (error) => {
-      toast.error(`Error creating member: ${error.message}`);
-    },
-  });
+  const mutations = {
+    delete: useMutation({
+      mutationFn: deleteMember,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['members'] });
+        toast.success('Member deleted successfully');
+      },
+      onError: (error) => {
+        toast.error(`Error deleting member: ${error.message}`);
+      },
+    }),
+    update: useMutation({
+      mutationFn: (data) => updateMember(data.id, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['members'] });
+        toast.success('Member updated successfully');
+        setIsEditDialogOpen(false);
+      },
+      onError: (error) => {
+        toast.error(`Error updating member: ${error.message}`);
+      },
+    }),
+    create: useMutation({
+      mutationFn: createMember,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['members'] });
+        toast.success('Member created successfully');
+        setIsEditDialogOpen(false);
+      },
+      onError: (error) => {
+        toast.error(`Error creating member: ${error.message}`);
+      },
+    }),
+  };
 
   const handleEdit = (member) => {
     setEditingMember(member);
@@ -72,14 +72,14 @@ const MemberList = () => {
   };
 
   const handleDelete = (id) => {
-    deleteMutation.mutate(id);
+    mutations.delete.mutate(id);
   };
 
   const handleUpdate = (data) => {
     if (editingMember) {
-      updateMutation.mutate({ id: editingMember.id, ...data });
+      mutations.update.mutate({ id: editingMember.id, ...data });
     } else {
-      createMutation.mutate(data);
+      mutations.create.mutate(data);
     }
   };
 
@@ -156,43 +156,40 @@ const MemberList = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {members && members.map((member) => {
-            const isBirthday = member.Birthday ? isToday(parseISO(member.Birthday)) : false;
-            return (
-              <TableRow key={member.id} className={isBirthday ? 'bg-yellow-100' : ''}>
-                <TableCell>
-                  <Checkbox
-                    checked={selectedMembers.includes(member.id)}
-                    onCheckedChange={() => handleCheckboxChange(member.id)}
-                  />
-                </TableCell>
-                <TableCell>{member.Name || 'N/A'}</TableCell>
-                <TableCell>{member.email || 'N/A'}</TableCell>
-                <TableCell>{member.Birthday ? format(parseISO(member.Birthday), 'MMM dd, yyyy') : 'N/A'}</TableCell>
-                <TableCell>
-                  <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
-                  <Button onClick={() => handleSendEmail(member)} variant="outline" className="mr-2">Send Email</Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="destructive">Delete</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the member's data.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(member.id)}>Delete</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
-            );
-          })}
+          {members && members.map((member) => (
+            <TableRow key={member.id} className={isToday(parseISO(member.Birthday)) ? 'bg-yellow-100' : ''}>
+              <TableCell>
+                <Checkbox
+                  checked={selectedMembers.includes(member.id)}
+                  onCheckedChange={() => handleCheckboxChange(member.id)}
+                />
+              </TableCell>
+              <TableCell>{member.Name || 'N/A'}</TableCell>
+              <TableCell>{member.email || 'N/A'}</TableCell>
+              <TableCell>{member.Birthday ? format(parseISO(member.Birthday), 'MMM dd, yyyy') : 'N/A'}</TableCell>
+              <TableCell>
+                <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
+                <Button onClick={() => handleSendEmail(member)} variant="outline" className="mr-2">Send Email</Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive">Delete</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the member's data.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDelete(member.id)}>Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
 
