@@ -7,6 +7,7 @@ import { Button } from '../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { AlertCircle, Moon, Sun } from 'lucide-react';
+import { Switch } from '../components/ui/switch';
 import { isAirtableConnected } from '../lib/airtable';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from 'next-themes';
@@ -14,7 +15,7 @@ import { useTheme } from 'next-themes';
 const Index = () => {
   const [editingMember, setEditingMember] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, useMockEmail, toggleEmailService } = useAuth();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
 
@@ -53,6 +54,13 @@ const Index = () => {
             <h2 className="text-xl text-gray-600 dark:text-gray-400">Member Dashboard</h2>
           </div>
           <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
+              <span>Use Mock Email</span>
+              <Switch
+                checked={useMockEmail}
+                onCheckedChange={toggleEmailService}
+              />
+            </div>
             <Button onClick={toggleTheme} variant="outline" size="icon">
               {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
             </Button>
@@ -65,6 +73,15 @@ const Index = () => {
             <AlertTitle>Warning</AlertTitle>
             <AlertDescription>
               Airtable is not connected. Using test data. CRUD operations are disabled.
+            </AlertDescription>
+          </Alert>
+        )}
+        {useMockEmail && (
+          <Alert variant="info" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Dev Mode</AlertTitle>
+            <AlertDescription>
+              Mock email service is in use. Emails will not be sent to real recipients.
             </AlertDescription>
           </Alert>
         )}

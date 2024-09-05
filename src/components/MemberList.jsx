@@ -10,9 +10,11 @@ import MemberForm from './MemberForm';
 import EmailModal from './EmailModal';
 import BulkEmailModal from './BulkEmailModal';
 import { format, isToday, parseISO } from 'date-fns';
-import { sendEmail } from '../lib/cpanelEmailService';
+import { sendEmail as sendCPanelEmail } from '../lib/cpanelEmailService';
+import { sendManualEmail as sendMockEmail } from '../lib/emailService';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from './ui/alert';
+import { useAuth } from '../context/AuthContext';
 
 const MemberList = () => {
   const queryClient = useQueryClient();
@@ -27,6 +29,7 @@ const MemberList = () => {
   const [isBulkEmailModalOpen, setIsBulkEmailModalOpen] = useState(false);
   const [emailRecipient, setEmailRecipient] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState([]);
+  const { useMockEmail } = useAuth();
 
   const deleteMutation = useMutation({
     mutationFn: deleteMember,
@@ -87,7 +90,8 @@ const MemberList = () => {
 
   const handleEmailSend = async (emailData) => {
     try {
-      await sendEmail({
+      const sendEmailFunction = useMockEmail ? sendMockEmail : sendCPanelEmail;
+      await sendEmailFunction({
         to: emailRecipient.email,
         subject: emailData.subject,
         html: emailData.html
@@ -102,9 +106,10 @@ const MemberList = () => {
 
   const handleBulkEmailSend = async (emailData) => {
     try {
+      const sendEmailFunction = useMockEmail ? sendMockEmail : sendCPanelEmail;
       for (const memberId of selectedMembers) {
         const member = members.find(m => m.id === memberId);
-        await sendEmail({
+        await sendEmailFunction({
           to: member.email,
           subject: emailData.subject,
           html: emailData.html
