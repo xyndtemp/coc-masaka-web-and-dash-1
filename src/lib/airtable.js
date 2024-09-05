@@ -25,10 +25,7 @@ export const getMembers = async () => {
     const records = await table.select().all();
     return records.map(record => ({
       id: record.id,
-      Name: record.fields.Name || '',
-      Email: record.fields.email || '', // Note: 'email' is lowercase in the Airtable data
-      Birthday: record.fields.Birthday || '',
-      createdTime: record.createdTime
+      ...record.fields
     }));
   } catch (error) {
     console.error('Error fetching members from Airtable:', error);

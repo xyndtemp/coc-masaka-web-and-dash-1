@@ -8,13 +8,20 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
   const methods = useForm({
     defaultValues: member || {
       Name: '',
-      email: '', // Changed from Email to email
+      email: '',
       Birthday: '',
     },
   });
 
   const handleSubmit = (data) => {
-    onSubmit(data);
+    if (onSubmit) {
+      onSubmit(data);
+    } else {
+      console.error('onSubmit is not defined');
+    }
+    if (onClose) {
+      onClose();
+    }
   };
 
   return (

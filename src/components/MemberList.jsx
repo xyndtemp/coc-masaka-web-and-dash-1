@@ -43,7 +43,7 @@ const MemberList = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => updateMember(data.id, { fields: data.fields }),
+    mutationFn: (data) => updateMember(data.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] });
       toast.success('Member updated successfully');
@@ -55,7 +55,7 @@ const MemberList = () => {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => createMember({ fields: data }),
+    mutationFn: createMember,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] });
       toast.success('Member created successfully');
@@ -77,7 +77,7 @@ const MemberList = () => {
 
   const handleUpdate = (data) => {
     if (editingMember) {
-      updateMutation.mutate({ id: editingMember.id, fields: data });
+      updateMutation.mutate({ id: editingMember.id, ...data });
     } else {
       createMutation.mutate(data);
     }
