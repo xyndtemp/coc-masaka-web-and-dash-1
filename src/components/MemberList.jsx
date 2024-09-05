@@ -135,8 +135,8 @@ const MemberList = () => {
     );
   };
 
-  const handleSelectAll = (event) => {
-    if (event.target.checked) {
+  const handleSelectAll = (checked) => {
+    if (checked) {
       setSelectedMembers(members.map(member => member.id));
     } else {
       setSelectedMembers([]);
