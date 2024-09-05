@@ -10,7 +10,7 @@ import MemberForm from './MemberForm';
 import EmailModal from './EmailModal';
 import BulkEmailModal from './BulkEmailModal';
 import { format, isToday, parseISO } from 'date-fns';
-import { sendManualEmail } from '../lib/emailService';
+import { sendEmail } from '../lib/cpanelEmailService';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from './ui/alert';
 
@@ -87,10 +87,10 @@ const MemberList = () => {
 
   const handleEmailSend = async (emailData) => {
     try {
-      await sendManualEmail({
+      await sendEmail({
         to: emailRecipient.email,
         subject: emailData.subject,
-        content: emailData.content
+        html: emailData.html
       });
       toast.success('Email sent successfully');
       setIsEmailModalOpen(false);
@@ -104,10 +104,10 @@ const MemberList = () => {
     try {
       for (const memberId of selectedMembers) {
         const member = members.find(m => m.id === memberId);
-        await sendManualEmail({
+        await sendEmail({
           to: member.email,
           subject: emailData.subject,
-          content: emailData.content
+          html: emailData.html
         });
       }
       toast.success('Bulk emails sent successfully');
