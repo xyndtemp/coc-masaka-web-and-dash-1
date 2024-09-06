@@ -1,20 +1,18 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getMembers, deleteMember, updateMember, createMember } from '../lib/airtable';
-import { Button } from './ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
-import { Checkbox } from './ui/checkbox';
-import MemberForm from './MemberForm';
-import EmailModal from './EmailModal';
-import BulkEmailModal from './BulkEmailModal';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format, isToday, parseISO } from 'date-fns';
-import { sendEmail as sendCPanelEmail } from '../lib/cpanelEmailService';
-import { sendManualEmail as sendMockEmail } from '../lib/emailService';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { createMember, deleteMember, getMembers, updateMember } from '../lib/airtable';
+import { sendEmail } from '../lib/emailService';
+import BulkEmailModal from './BulkEmailModal';
+import EmailModal from './EmailModal';
+import MemberForm from './MemberForm';
 import { Alert, AlertDescription } from './ui/alert';
-import { useAuth } from '../context/AuthContext';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
+import { Button } from './ui/button';
+import { Checkbox } from './ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
 const MemberList = () => {
   const queryClient = useQueryClient();
@@ -29,7 +27,6 @@ const MemberList = () => {
   const [isBulkEmailModalOpen, setIsBulkEmailModalOpen] = useState(false);
   const [emailRecipient, setEmailRecipient] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState([]);
-  const { useMockEmail } = useAuth();
 
   const mutations = {
     delete: useMutation({
@@ -93,11 +90,11 @@ const MemberList = () => {
 
   const handleEmailSend = async (emailData) => {
     try {
-      const sendEmailFunction = useMockEmail ? sendMockEmail : sendCPanelEmail;
-      await sendEmailFunction({
+
+      await sendEmail({
         to: emailRecipient.email,
         subject: emailData.subject,
-        html: emailData.html
+        body: emailData.html
       });
       toast.success('Email sent successfully');
       setIsEmailModalOpen(false);
@@ -109,13 +106,13 @@ const MemberList = () => {
 
   const handleBulkEmailSend = async (emailData) => {
     try {
-      const sendEmailFunction = useMockEmail ? sendMockEmail : sendCPanelEmail;
+
       for (const memberId of selectedMembers) {
         const member = members.find(m => m.id === memberId);
-        await sendEmailFunction({
+        await sendEmail({
           to: member.email,
           subject: emailData.subject,
-          html: emailData.html
+          body: emailData.html
         });
       }
       toast.success('Bulk emails sent successfully');
@@ -194,7 +191,7 @@ const MemberList = () => {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the member's data.
+                        This action cannot be undone. This will permanently delete the member&apos;s data.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

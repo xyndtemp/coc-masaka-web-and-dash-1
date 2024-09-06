@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AlertCircle, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MemberList from '../components/MemberList';
+import { toast } from 'sonner';
 import MemberForm from '../components/MemberForm';
+import MemberList from '../components/MemberList';
 import SEOHead from '../components/SEOHead';
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { AlertCircle, Moon, Sun } from 'lucide-react';
 import { Switch } from '../components/ui/switch';
-import { isAirtableConnected } from '../lib/airtable';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from 'next-themes';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createMember } from '../lib/airtable';
-import { toast } from 'sonner';
+import { createMember, isAirtableConnected } from '../lib/airtable';
 
 const Index = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Form, FormField, FormItem, FormLabel, FormControl } from './ui/form';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { generateEmailTemplate } from '../lib/cpanelEmailService';
+import { generateEmailTemplate } from '../lib/emailService';
+import { Button } from './ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
+import { Input } from './ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 const EmailModal = ({ onClose, onSend }) => {
   const [activeTab, setActiveTab] = useState('edit');

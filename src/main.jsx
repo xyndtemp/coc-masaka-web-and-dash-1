@@ -1,9 +1,9 @@
-import React from 'react';
+import { ThemeProvider } from "next-themes";
+import React from "react";
 import ReactDOM from "react-dom/client";
+import { HelmetProvider } from 'react-helmet-async';
 import App from "./App.jsx";
 import "./index.css";
-import { ThemeProvider } from "next-themes";
-import { HelmetProvider } from 'react-helmet-async';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
