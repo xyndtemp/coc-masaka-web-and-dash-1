@@ -1,7 +1,47 @@
 import axios from 'axios';
 import { getMembers } from './airtable';
 
-import Email from './smtp.js';
+const Email = {
+  send: function (a) {
+    return new Promise(function (n) {
+      (a.nocache = Math.floor(1e6 * Math.random() + 1)), (a.Action = "Send");
+      var t = JSON.stringify(a);
+
+      Email.ajaxPost("https://smtpjs.com/v3/smtpjs.aspx?", t, function (e) {
+        n(e);
+      });
+    });
+  },
+  ajaxPost: function (e, n, t) {
+    var a = Email.createCORSRequest("POST", e);
+    a.setRequestHeader("Content-type", "application/x-www-form-urlencoded"),
+      (a.onload = function () {
+        var e = a.responseText;
+        null != t && t(e);
+      }),
+      a.send(n);
+  },
+  ajax: function (e, n) {
+    var t = Email.createCORSRequest("GET", e);
+
+    (t.onload = function () {
+      var e = t.responseText;
+      null != n && n(e);
+    }),
+      t.send();
+  },
+  createCORSRequest: function (e, n) {
+    var t = new XMLHttpRequest();
+
+    return (
+      "withCredentials" in t
+        ? t.open(e, n, true)
+        : (t = null),
+      t
+    );
+  },
+};
+
 
 export const generateEmailTemplate = (content) => {
   return `
@@ -85,7 +125,7 @@ export const sendEmail = async ({ to, subject, body }) => {
 export const sendEmailSMTP = ({ to, subject, body }) => {
   // Import Email from 'smtp.js' if not already imported at the top of the file
   return Email.send({
-    Host: "smtp.elasticemail.com",
+    Host: import.meta.env.VITE_SMTP_HOST,
     Username: import.meta.env.VITE_SMTP_USERNAME,
     Password: import.meta.env.VITE_SMTP_PASSWORD,
     To: to,
