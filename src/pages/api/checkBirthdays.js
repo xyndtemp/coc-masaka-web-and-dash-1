@@ -1,5 +1,9 @@
 import { getMembers } from '../../lib/airtable';
 import { sendEmail, generateEmailTemplate } from '../../lib/emailService';
+import fs from 'fs';
+import path from 'path';
+
+const resultsFilePath = path.join(process.cwd(), 'cronJobResults.json');
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -12,6 +16,7 @@ export default async function handler(req, res) {
         return birthday === today;
       });
 
+      let emailsSent = 0;
       for (const member of birthdayMembers) {
         const emailContent = generateEmailTemplate(`
           <h1>Happy Birthday, ${member.Name}!</h1>
@@ -24,12 +29,27 @@ export default async function handler(req, res) {
           subject: 'Happy Birthday from GreenField!',
           body: emailContent,
         });
+        emailsSent++;
       }
 
-      res.status(200).json({ message: `Sent ${birthdayMembers.length} birthday emails` });
+      const results = {
+        lastRun: new Date().toISOString(),
+        emailsSent,
+        status: 'success'
+      };
+
+      fs.writeFileSync(resultsFilePath, JSON.stringify(results));
+
+      res.status(200).json({ message: `Sent ${emailsSent} birthday emails`, ...results });
     } catch (error) {
       console.error('Error in birthday check:', error);
-      res.status(500).json({ error: 'Failed to process birthday emails' });
+      const results = {
+        lastRun: new Date().toISOString(),
+        emailsSent: 0,
+        status: 'error'
+      };
+      fs.writeFileSync(resultsFilePath, JSON.stringify(results));
+      res.status(500).json({ error: 'Failed to process birthday emails', ...results });
     }
   } else {
     res.setHeader('Allow', ['POST']);

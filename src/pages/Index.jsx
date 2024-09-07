@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import CronJobResults from "../components/CronJobResults";
 import MemberForm from "../components/MemberForm";
 import MemberList from "../components/MemberList";
 import SEOHead from "../components/SEOHead";
@@ -16,13 +17,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../components/ui/dialog";
-// import { Switch } from '../components/ui/switch';
 import { useAuth } from "../context/AuthContext";
 import { createMember, isAirtableConnected } from "../lib/airtable";
 
 const Index = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { logout, useMockEmail, toggleEmailService } = useAuth();
+  const { logout, useMockEmail } = useAuth();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const queryClient = useQueryClient();
@@ -65,7 +65,6 @@ const Index = () => {
       <div className="container mx-auto p-4">
         <Header
           useMockEmail={useMockEmail}
-          toggleEmailService={toggleEmailService}
           toggleTheme={toggleTheme}
           theme={theme}
           handleLogout={handleLogout}
@@ -80,19 +79,20 @@ const Index = () => {
           setIsDialogOpen={setIsDialogOpen}
           handleCreateMember={handleCreateMember}
         />
-        <MemberList />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="md:col-span-2">
+            <MemberList />
+          </div>
+          <div>
+            <CronJobResults />
+          </div>
+        </div>
       </div>
     </>
   );
 };
 
-const Header = ({
-  // useMockEmail, toggleEmailService,
-
-  toggleTheme,
-  theme,
-  handleLogout,
-}) => (
+const Header = ({ toggleTheme, theme, handleLogout }) => (
   <div className="flex justify-between items-center mb-4">
     <div>
       <h1 className="text-3xl font-bold">GreenField Member Contact System</h1>
@@ -101,10 +101,6 @@ const Header = ({
       </h2>
     </div>
     <div className="flex items-center space-x-2">
-      {/* <div className="flex items-center space-x-2">
-        <span>Use Mock Email</span>
-        <Switch checked={useMockEmail} onCheckedChange={toggleEmailService} />
-      </div> */}
       <Button onClick={toggleTheme} variant="outline" size="icon">
         {theme === "dark" ? (
           <Sun className="h-[1.2rem] w-[1.2rem]" />
