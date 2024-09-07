@@ -7,6 +7,7 @@ import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { ScrollArea } from './ui/scroll-area';
 
 const EmailModal = ({ onClose, onSend }) => {
   const [activeTab, setActiveTab] = useState('edit');
@@ -43,25 +44,27 @@ const EmailModal = ({ onClose, onSend }) => {
             <TabsTrigger value="edit">Edit</TabsTrigger>
             <TabsTrigger value="preview">Preview</TabsTrigger>
           </TabsList>
-          <TabsContent value="edit">
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Content</FormLabel>
-                  <FormControl>
-                    <ReactQuill theme="snow" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </TabsContent>
-          <TabsContent value="preview">
-            <div className="border p-4 rounded-md">
-              <div dangerouslySetInnerHTML={{ __html: generateEmailTemplate(form.watch('content')) }} />
-            </div>
-          </TabsContent>
+          <ScrollArea className="h-[400px] overflow-y-auto">
+            <TabsContent value="edit">
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Content</FormLabel>
+                    <FormControl>
+                      <ReactQuill theme="snow" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </TabsContent>
+            <TabsContent value="preview">
+              <div className="border p-4 rounded-md">
+                <div dangerouslySetInnerHTML={{ __html: generateEmailTemplate(form.watch('content')) }} />
+              </div>
+            </TabsContent>
+          </ScrollArea>
         </Tabs>
         <div className="flex justify-end space-x-2">
           <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
