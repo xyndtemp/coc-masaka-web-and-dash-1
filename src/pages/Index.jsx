@@ -73,20 +73,16 @@ const Index = () => {
           airtableConnected={airtableConnected}
           useMockEmail={useMockEmail}
         />
+        <div className="mb-4">
+          <CronJobResults />
+        </div>
         <AddMemberButton
           airtableConnected={airtableConnected}
           isDialogOpen={isDialogOpen}
           setIsDialogOpen={setIsDialogOpen}
           handleCreateMember={handleCreateMember}
         />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div className="md:col-span-2">
-            <MemberList />
-          </div>
-          <div>
-            <CronJobResults />
-          </div>
-        </div>
+        <MemberList />
       </div>
     </>
   );
