@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
 
 const fetchCronJobResults = async () => {
-  const response = await axios.get('/api/cronJobResults');
+  const response = await axios.get('/api/checkBirthdays');
   return response.data;
 };
 
@@ -16,17 +16,17 @@ const CronJobResults = () => {
     refetchInterval: 60000, // Refetch every minute
   });
 
-  if (isLoading) return <div>Loading birthday information...</div>;
-  if (error) return <Alert variant="destructive"><AlertDescription>Error fetching birthday information</AlertDescription></Alert>;
+  if (isLoading) return <div>Checking for birthdays...</div>;
+  if (error) return <Alert variant="destructive"><AlertDescription>Error checking birthdays: {error.message}</AlertDescription></Alert>;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Birthdays Sent Today</CardTitle>
+        <CardTitle>Birthdays Today</CardTitle>
       </CardHeader>
       <CardContent>
-        {data.emailsSent > 0 ? (
-          <p>{data.emailsSent} birthday email{data.emailsSent > 1 ? 's' : ''} sent today</p>
+        {data.birthdaysToday > 0 ? (
+          <p>{data.birthdaysToday} birthday{data.birthdaysToday > 1 ? 's' : ''} today. {data.emailsSent} email{data.emailsSent > 1 ? 's' : ''} sent.</p>
         ) : (
           <p>No birthdays today</p>
         )}

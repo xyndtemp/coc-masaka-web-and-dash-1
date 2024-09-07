@@ -69,13 +69,13 @@ const Index = () => {
           theme={theme}
           handleLogout={handleLogout}
         />
+        <div className="mb-4">
+          <CronJobResults />
+        </div>
         <Alerts
           airtableConnected={airtableConnected}
           useMockEmail={useMockEmail}
         />
-        <div className="mb-4">
-          <CronJobResults />
-        </div>
         <AddMemberButton
           airtableConnected={airtableConnected}
           isDialogOpen={isDialogOpen}
