@@ -22,11 +22,11 @@ const CronJobResults = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Birthdays Today</CardTitle>
+        <CardTitle>Birthdays Sent Today</CardTitle>
       </CardHeader>
       <CardContent>
         {data.birthdaysToday > 0 ? (
-          <p>{data.birthdaysToday} birthday{data.birthdaysToday > 1 ? 's' : ''} today. {data.emailsSent} email{data.emailsSent > 1 ? 's' : ''} sent.</p>
+          <p>{data.birthdaysToday} birthday email{data.birthdaysToday > 1 ? 's' : ''} sent today.</p>
         ) : (
           <p>No birthdays today</p>
         )}
