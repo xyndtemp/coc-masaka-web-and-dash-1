@@ -41,7 +41,9 @@ export const createMember = async (data) => {
   }
 
   try {
-    const record = await table.create(data);
+    // Remove the 'id' field from the data before sending to Airtable
+    const { id, ...fieldsToCreate } = data;
+    const record = await table.create(fieldsToCreate);
     return { id: record.id, ...record.fields };
   } catch (error) {
     console.error('Error creating member:', error);
@@ -56,7 +58,9 @@ export const updateMember = async (id, data) => {
   }
 
   try {
-    const record = await table.update(id, data);
+    // Remove the 'id' field from the data before sending to Airtable
+    const { id: _, ...fieldsToUpdate } = data;
+    const record = await table.update(id, fieldsToUpdate);
     return { id: record.id, ...record.fields };
   } catch (error) {
     console.error('Error updating member:', error);
