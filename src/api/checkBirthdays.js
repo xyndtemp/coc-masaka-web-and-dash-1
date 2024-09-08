@@ -1,5 +1,5 @@
-import { getMembers } from '../../lib/airtable';
-import { sendEmail, generateEmailTemplate } from '../../lib/emailService';
+import { getMembers } from '../lib/airtable';
+import { generateEmailTemplate, sendEmail } from '../lib/emailService';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
