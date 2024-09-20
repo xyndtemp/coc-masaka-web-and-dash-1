@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
 
 const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
 const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
@@ -84,7 +85,7 @@ export const deleteMember = async (id) => {
 const dummyData = [
   {
     id: '1',
-    'member ID': 'COC001',
+    'member ID': uuidv4(),
     'ID Printed': 'true',
     'Gender': 'Bro.',
     'FirstName': 'James Dakom',
@@ -102,7 +103,7 @@ const dummyData = [
   },
   {
     id: '2',
-    'member ID': 'COC002',
+    'member ID': uuidv4(),
     'ID Printed': 'false',
     'Gender': 'Sis.',
     'FirstName': 'Oto-Obong Daniel',

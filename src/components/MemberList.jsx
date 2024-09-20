@@ -9,6 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import Barcode from 'react-barcode';
 
 const MemberList = () => {
   const queryClient = useQueryClient();
@@ -79,6 +80,7 @@ const MemberList = () => {
             <TableHead>ID Printed</TableHead>
             <TableHead>Passport</TableHead>
             <TableHead>Signature</TableHead>
+            <TableHead>Barcode</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -99,6 +101,9 @@ const MemberList = () => {
                 )}
               </TableCell>
               <TableCell>
+                <Barcode value={member['member ID']} height={30} width={1} />
+              </TableCell>
+              <TableCell>
                 <Button onClick={() => handleView(member)} variant="outline" className="mr-2">View</Button>
                 <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
                 <AlertDialog>
@@ -110,7 +115,7 @@ const MemberList = () => {
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete the member's data.
-                      </AlertDialogDescription>
+                      </AlertDialogTitle>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -125,7 +130,7 @@ const MemberList = () => {
       </Table>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>Edit Member</DialogTitle>
           </DialogHeader>
@@ -134,7 +139,7 @@ const MemberList = () => {
       </Dialog>
 
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>View Member</DialogTitle>
           </DialogHeader>

@@ -5,10 +5,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import SignatureCanvas from 'react-signature-canvas';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { ScrollArea } from './ui/scroll-area';
+import { v4 as uuidv4 } from 'uuid';
+import Barcode from 'react-barcode';
 
-const FormFields = ({ methods }) => (
+const FormFields = ({ methods, signatureRef, passportImage, setPassportImage }) => (
   <>
     <FormField
       control={methods.control}
@@ -146,6 +148,36 @@ const FormFields = ({ methods }) => (
         </FormItem>
       )}
     />
+    <FormItem>
+      <FormLabel>Passport</FormLabel>
+      <FormControl>
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setPassportImage(reader.result);
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
+      </FormControl>
+    </FormItem>
+    {passportImage && (
+      <img src={passportImage} alt="Passport" className="w-32 h-32 object-cover mt-2" />
+    )}
+    <div>
+      <FormLabel>Signature</FormLabel>
+      <SignatureCanvas
+        ref={signatureRef}
+        canvasProps={{width: 300, height: 150, className: 'border border-gray-300'}}
+      />
+      <Button type="button" onClick={() => signatureRef.current.clear()} className="mt-2">Clear Signature</Button>
+    </div>
   </>
 );
 
@@ -168,6 +200,7 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
   });
 
   const signatureRef = useRef();
+  const [passportImage, setPassportImage] = useState(member?.Passport?.[0]?.url || null);
 
   const handleSubmit = async (data) => {
     try {
@@ -175,6 +208,13 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
         const signatureDataUrl = signatureRef.current.toDataURL();
         data.Signature = [{ url: signatureDataUrl }];
       }
+      if (passportImage) {
+        data.Passport = [{ url: passportImage }];
+      }
+      if (!data['member ID']) {
+        data['member ID'] = uuidv4();
+      }
+      data.barcode = data['member ID'];
       if (onSubmit) {
         await onSubmit(data);
         toast.success('Member saved successfully');
@@ -189,15 +229,11 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
   return (
     <Form {...methods}>
       <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">
-        <ScrollArea className="h-[400px] pr-4">
-          <FormFields methods={methods} />
-          <div>
-            <FormLabel>Signature</FormLabel>
-            <SignatureCanvas
-              ref={signatureRef}
-              canvasProps={{width: 300, height: 150, className: 'border border-gray-300'}}
-            />
-            <Button type="button" onClick={() => signatureRef.current.clear()} className="mt-2">Clear Signature</Button>
+        <ScrollArea className="h-[60vh] pr-4">
+          <FormFields methods={methods} signatureRef={signatureRef} passportImage={passportImage} setPassportImage={setPassportImage} />
+          <div className="mt-4">
+            <FormLabel>Barcode</FormLabel>
+            <Barcode value={member?.['member ID'] || 'New Member'} />
           </div>
         </ScrollArea>
         <Button type="submit" className="w-full">
