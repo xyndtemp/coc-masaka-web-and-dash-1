@@ -1,8 +1,7 @@
 import { Cloudinary } from "@cloudinary/url-gen";
 
 const cloudName = import.meta.env.VITE_CLOUD_NAME;
-const apiKey = import.meta.env.VITE_CLOUD_API_KEY;
-const apiSecret = import.meta.env.VITE_CLOUD_API_SECRET;
+const uploadPreset = import.meta.env.VITE_UPLOAD_PRESET;
 
 const cld = new Cloudinary({
   cloud: {
@@ -17,7 +16,7 @@ export const initializeCloudinaryWidget = (callback) => {
   return window.cloudinary.createUploadWidget(
     {
       cloudName: cloudName,
-      uploadPreset: "ml_default",
+      uploadPreset: uploadPreset,
       sources: ["local", "camera"],
       multiple: false,
       maxFiles: 1,

@@ -15,6 +15,11 @@ const FormFields = ({ methods, passportImage, setPassportImage, signatureImage, 
     uploadSignatureWidget.current = initializeCloudinaryWidget((url) => setSignatureImage(url));
   }, [setPassportImage, setSignatureImage]);
 
+  const handleUpload = (type) => {
+    const widget = type === 'passport' ? uploadPassportWidget.current : uploadSignatureWidget.current;
+    widget.open();
+  };
+
   return (
     <>
       <FormField
@@ -157,7 +162,7 @@ const FormFields = ({ methods, passportImage, setPassportImage, signatureImage, 
         <FormLabel>Passport</FormLabel>
         <FormControl>
           <div>
-            <Button type="button" onClick={() => uploadPassportWidget.current.open()}>
+            <Button type="button" onClick={() => handleUpload('passport')}>
               Upload Passport
             </Button>
             {passportImage && <img src={passportImage} alt="Passport" className="mt-2 w-32 h-32 object-cover" />}
@@ -168,7 +173,7 @@ const FormFields = ({ methods, passportImage, setPassportImage, signatureImage, 
         <FormLabel>Signature</FormLabel>
         <FormControl>
           <div>
-            <Button type="button" onClick={() => uploadSignatureWidget.current.open()}>
+            <Button type="button" onClick={() => handleUpload('signature')}>
               Upload Signature
             </Button>
             {signatureImage && <img src={signatureImage} alt="Signature" className="mt-2 w-64 h-32 object-contain" />}
