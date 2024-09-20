@@ -1,4 +1,3 @@
-import Airtable from 'airtable';
 import testUsers from '../data/testUsers.json';
 import { toast } from 'sonner';
 
@@ -9,6 +8,7 @@ const tableName = import.meta.env.VITE_AIRTABLE_TABLE_NAME;
 let base, table;
 
 if (apiKey && baseId && tableName) {
+  const Airtable = require('airtable');
   base = new Airtable({ apiKey }).base(baseId);
   table = base(tableName);
 }
@@ -41,7 +41,6 @@ export const createMember = async (data) => {
   }
 
   try {
-    // Remove the 'id' field from the data before sending to Airtable
     const { id, ...fieldsToCreate } = data;
     const record = await table.create(fieldsToCreate);
     return { id: record.id, ...record.fields };
@@ -58,7 +57,6 @@ export const updateMember = async (id, data) => {
   }
 
   try {
-    // Remove the 'id' field from the data before sending to Airtable
     const { id: _, ...fieldsToUpdate } = data;
     const record = await table.update(id, fieldsToUpdate);
     return { id: record.id, ...record.fields };

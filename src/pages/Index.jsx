@@ -4,7 +4,6 @@ import { useTheme } from "next-themes";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import CronJobResults from "../components/CronJobResults";
 import MemberForm from "../components/MemberForm";
 import MemberList from "../components/MemberList";
 import SEOHead from "../components/SEOHead";
@@ -22,7 +21,7 @@ import { createMember, isAirtableConnected } from "../lib/airtable";
 
 const Index = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { logout, useMockEmail } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const queryClient = useQueryClient();
@@ -58,24 +57,17 @@ const Index = () => {
   return (
     <>
       <SEOHead
-        title="GreenField Member Dashboard"
-        description="Manage GreenField members, track birthdays, and send communications efficiently."
-        canonicalUrl="https://www.greenfield-org.com/dashboard"
+        title="COC Masaka Member Management System"
+        description="Manage COC Masaka members efficiently."
+        canonicalUrl="https://www.cocmasaka.org/dashboard"
       />
       <div className="container mx-auto p-4">
         <Header
-          useMockEmail={useMockEmail}
           toggleTheme={toggleTheme}
           theme={theme}
           handleLogout={handleLogout}
         />
-        <div className="mb-4">
-          <CronJobResults />
-        </div>
-        <Alerts
-          airtableConnected={airtableConnected}
-          useMockEmail={useMockEmail}
-        />
+        <Alerts airtableConnected={airtableConnected} />
         <AddMemberButton
           airtableConnected={airtableConnected}
           isDialogOpen={isDialogOpen}
@@ -91,7 +83,7 @@ const Index = () => {
 const Header = ({ toggleTheme, theme, handleLogout }) => (
   <div className="flex justify-between items-center mb-4">
     <div>
-      <h1 className="text-3xl font-bold">GreenField Member Contact System</h1>
+      <h1 className="text-3xl font-bold">COC Masaka Member Management System</h1>
       <h2 className="text-xl text-gray-600 dark:text-gray-400">
         Member Dashboard
       </h2>
@@ -109,7 +101,7 @@ const Header = ({ toggleTheme, theme, handleLogout }) => (
   </div>
 );
 
-const Alerts = ({ airtableConnected, useMockEmail }) => (
+const Alerts = ({ airtableConnected }) => (
   <>
     {!airtableConnected && (
       <Alert variant="warning" className="mb-4">
@@ -118,16 +110,6 @@ const Alerts = ({ airtableConnected, useMockEmail }) => (
         <AlertDescription>
           Airtable is not connected. Using test data. CRUD operations are
           disabled.
-        </AlertDescription>
-      </Alert>
-    )}
-    {useMockEmail && (
-      <Alert variant="info" className="mb-4">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Dev Mode</AlertTitle>
-        <AlertDescription>
-          Mock email service is in use. Emails will not be sent to real
-          recipients.
         </AlertDescription>
       </Alert>
     )}
