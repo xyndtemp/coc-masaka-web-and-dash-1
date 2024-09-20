@@ -13,9 +13,9 @@ const SEOHead = ({ title, description, canonicalUrl }) => {
   const schemaOrgOrganization = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'GreenField Organization',
-    url: 'https://www.greenfield-org.com',
-    logo: 'https://www.greenfield-org.com/logo.png',
+    name: 'COC Masaka ',
+    url: 'https://coc-masaka.vercel.app/',
+    logo: 'https://coc-masaka.vercel.app/coc.png',
   };
 
   return (
