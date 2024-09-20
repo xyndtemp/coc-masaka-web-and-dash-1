@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { deleteMember, getMembers, updateMember } from '../lib/airtable';
 import MemberForm from './MemberForm';
+import MemberView from './MemberView';
 import { Alert, AlertDescription } from './ui/alert';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { Button } from './ui/button';
@@ -17,7 +18,9 @@ const MemberList = () => {
     retry: 3,
   });
   const [editingMember, setEditingMember] = useState(null);
+  const [viewingMember, setViewingMember] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   const mutations = {
     delete: useMutation({
@@ -50,6 +53,11 @@ const MemberList = () => {
     setIsEditDialogOpen(true);
   };
 
+  const handleView = (member) => {
+    setViewingMember(member);
+    setIsViewDialogOpen(true);
+  };
+
   const handleDelete = (id) => {
     mutations.delete.mutate(id);
   };
@@ -66,19 +74,32 @@ const MemberList = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
             <TableHead>Gender</TableHead>
-            <TableHead>Phone Number</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>ID Printed</TableHead>
+            <TableHead>Passport</TableHead>
+            <TableHead>Signature</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {members && members.map((member) => (
             <TableRow key={member.id}>
-              <TableCell>{`${member.FirstName} ${member.LastName}`}</TableCell>
               <TableCell>{member.Gender}</TableCell>
-              <TableCell>{member['Phone Number'] || 'N/A'}</TableCell>
+              <TableCell>{`${member.FirstName} ${member.LastName}`}</TableCell>
+              <TableCell>{member['ID Printed'] ? 'Yes' : 'No'}</TableCell>
               <TableCell>
+                {member.Passport && member.Passport[0] && (
+                  <img src={member.Passport[0].url} alt="Passport" className="w-10 h-10 object-cover" />
+                )}
+              </TableCell>
+              <TableCell>
+                {member.Signature && member.Signature[0] && (
+                  <img src={member.Signature[0].url} alt="Signature" className="w-10 h-10 object-cover" />
+                )}
+              </TableCell>
+              <TableCell>
+                <Button onClick={() => handleView(member)} variant="outline" className="mr-2">View</Button>
                 <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -109,6 +130,15 @@ const MemberList = () => {
             <DialogTitle>Edit Member</DialogTitle>
           </DialogHeader>
           <MemberForm member={editingMember} onClose={() => setIsEditDialogOpen(false)} onSubmit={handleUpdate} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>View Member</DialogTitle>
+          </DialogHeader>
+          <MemberView member={viewingMember} />
         </DialogContent>
       </Dialog>
     </>

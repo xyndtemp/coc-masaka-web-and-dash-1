@@ -18,7 +18,7 @@ export const isAirtableConnected = () => {
 
 export const getMembers = async () => {
   if (!isAirtableConnected()) {
-    return [];
+    return dummyData;
   }
 
   try {
@@ -79,3 +79,42 @@ export const deleteMember = async (id) => {
     throw error;
   }
 };
+
+// Dummy data for preview
+const dummyData = [
+  {
+    id: '1',
+    'member ID': 'COC001',
+    'ID Printed': 'true',
+    'Gender': 'Bro.',
+    'FirstName': 'James Dakom',
+    'LastName': 'Golu',
+    'Signature': [{ url: 'https://via.placeholder.com/150?text=Signature' }],
+    'BarcodeImage': [{ url: 'https://via.placeholder.com/150?text=Barcode' }],
+    'barcode': '26ac9d48-b1fe-4571-8e6c-2a62fe7b4c77',
+    'Phone Number': '+234 123 456 7890',
+    'Email': 'james.golu@example.com',
+    'Marital Status': 'Married',
+    'Address': '123 Main St, Masaka, Nigeria',
+    'Nationality': 'Nigerian',
+    'L.G.A': 'Jos North',
+    'Passport': [{ url: 'https://via.placeholder.com/150?text=Passport' }]
+  },
+  {
+    id: '2',
+    'member ID': 'COC002',
+    'ID Printed': 'false',
+    'Gender': 'Sis.',
+    'FirstName': 'Oto-Obong Daniel',
+    'LastName': 'Okon',
+    'BarcodeImage': [{ url: 'https://via.placeholder.com/150?text=Barcode' }],
+    'barcode': 'b0d6d8e6-3a8d-4374-a829-16ea59c8ef9a',
+    'Phone Number': '+234 987 654 3210',
+    'Email': 'oto.okon@example.com',
+    'Marital Status': 'Single',
+    'Address': '456 Church Rd, Masaka, Nigeria',
+    'Nationality': 'Nigerian',
+    'L.G.A': 'Uyo',
+    'Passport': [{ url: 'https://via.placeholder.com/150?text=Passport' }]
+  }
+];

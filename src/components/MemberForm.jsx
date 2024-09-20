@@ -4,6 +4,8 @@ import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import SignatureCanvas from 'react-signature-canvas';
+import { useRef } from 'react';
 
 const MemberForm = ({ member, onClose, onSubmit }) => {
   const methods = useForm({
@@ -23,8 +25,14 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     },
   });
 
+  const signatureRef = useRef();
+
   const handleSubmit = async (data) => {
     try {
+      if (signatureRef.current) {
+        const signatureDataUrl = signatureRef.current.toDataURL();
+        data.Signature = [{ url: signatureDataUrl }];
+      }
       if (onSubmit) {
         await onSubmit(data);
         toast.success('Member saved successfully');
@@ -78,6 +86,26 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
                 <SelectContent>
                   <SelectItem value="Bro.">Brother</SelectItem>
                   <SelectItem value="Sis.">Sister</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={methods.control}
+          name="ID Printed"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>ID Printed</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select ID Printed status" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>
@@ -155,6 +183,14 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
             </FormItem>
           )}
         />
+        <div>
+          <FormLabel>Signature</FormLabel>
+          <SignatureCanvas
+            ref={signatureRef}
+            canvasProps={{width: 500, height: 200, className: 'border border-gray-300'}}
+          />
+          <Button type="button" onClick={() => signatureRef.current.clear()} className="mt-2">Clear Signature</Button>
+        </div>
         <Button type="submit">
           {member ? 'Update' : 'Create'} Member
         </Button>
