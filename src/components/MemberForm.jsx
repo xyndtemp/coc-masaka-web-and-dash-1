@@ -1,187 +1,185 @@
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import SignatureCanvas from 'react-signature-canvas';
 import { useRef, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { CloudinaryImage } from '../lib/cloudinary';
+import { initializeCloudinaryWidget } from '../lib/cloudinary';
 
-const FormFields = ({ methods, signatureRef, passportImage, setPassportImage }) => (
-  <>
-    <FormField
-      control={methods.control}
-      name="FirstName"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>First Name</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="LastName"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Last Name</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Gender"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Gender</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+const FormFields = ({ methods, passportImage, setPassportImage, signatureImage, setSignatureImage }) => {
+  const uploadPassportWidget = useRef();
+  const uploadSignatureWidget = useRef();
+
+  const initializeWidgets = () => {
+    uploadPassportWidget.current = initializeCloudinaryWidget((url) => setPassportImage(url));
+    uploadSignatureWidget.current = initializeCloudinaryWidget((url) => setSignatureImage(url));
+  };
+
+  useState(initializeWidgets, []);
+
+  return (
+    <>
+      <FormField
+        control={methods.control}
+        name="FirstName"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>First Name</FormLabel>
             <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select gender" />
-              </SelectTrigger>
+              <Input {...field} />
             </FormControl>
-            <SelectContent>
-              <SelectItem value="Bro.">Brother</SelectItem>
-              <SelectItem value="Sis.">Sister</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="ID Printed"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>ID Printed</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="LastName"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Last Name</FormLabel>
             <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select ID Printed status" />
-              </SelectTrigger>
+              <Input {...field} />
             </FormControl>
-            <SelectContent>
-              <SelectItem value="true">Yes</SelectItem>
-              <SelectItem value="false">No</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Phone Number"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Phone Number</FormLabel>
-          <FormControl>
-            <Input {...field} type="tel" />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Email"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Email</FormLabel>
-          <FormControl>
-            <Input {...field} type="email" />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Marital Status"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Marital Status</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Address"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Address</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Nationality"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Nationality</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="LGA"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>LGA</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormItem>
-      <FormLabel>Passport</FormLabel>
-      <FormControl>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                setPassportImage(reader.result);
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
-        />
-      </FormControl>
-    </FormItem>
-    {passportImage && (
-      <CloudinaryImage publicId={passportImage} alt="Passport" width={128} height={128} />
-    )}
-    <div>
-      <FormLabel>Signature</FormLabel>
-      <div className="border border-gray-300 bg-white h-40">
-        <SignatureCanvas
-          ref={signatureRef}
-          canvasProps={{width: '100%', height: '100%', className: 'signature-canvas'}}
-          backgroundColor="white"
-        />
-      </div>
-      <Button type="button" onClick={() => signatureRef.current.clear()} className="mt-2">Clear Signature</Button>
-    </div>
-  </>
-);
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="Gender"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Gender</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="Bro.">Brother</SelectItem>
+                <SelectItem value="Sis.">Sister</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="ID Printed"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>ID Printed</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select ID Printed status" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="true">Yes</SelectItem>
+                <SelectItem value="false">No</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="Phone Number"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Phone Number</FormLabel>
+            <FormControl>
+              <Input {...field} type="tel" />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="Email"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Email</FormLabel>
+            <FormControl>
+              <Input {...field} type="email" />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="Marital Status"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Marital Status</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="Address"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Address</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="Nationality"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nationality</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={methods.control}
+        name="LGA"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>LGA</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormItem>
+        <FormLabel>Passport</FormLabel>
+        <FormControl>
+          <div>
+            <Button type="button" onClick={() => uploadPassportWidget.current.open()}>
+              Upload Passport
+            </Button>
+            {passportImage && <img src={passportImage} alt="Passport" className="mt-2 w-32 h-32 object-cover" />}
+          </div>
+        </FormControl>
+      </FormItem>
+      <FormItem>
+        <FormLabel>Signature</FormLabel>
+        <FormControl>
+          <div>
+            <Button type="button" onClick={() => uploadSignatureWidget.current.open()}>
+              Upload Signature
+            </Button>
+            {signatureImage && <img src={signatureImage} alt="Signature" className="mt-2 w-64 h-32 object-contain" />}
+          </div>
+        </FormControl>
+      </FormItem>
+    </>
+  );
+};
 
 const MemberForm = ({ member, onClose, onSubmit }) => {
   const methods = useForm({
@@ -200,36 +198,36 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     },
   });
 
-  const signatureRef = useRef();
   const [passportImage, setPassportImage] = useState(member?.Passport?.[0]?.url || null);
+  const [signatureImage, setSignatureImage] = useState(member?.Signature?.[0]?.url || null);
 
   const handleSubmit = async (data) => {
     try {
-      if (signatureRef.current) {
-        const signatureDataUrl = signatureRef.current.toDataURL();
-        data.Signature = [{ url: signatureDataUrl }];
-      }
       if (passportImage) {
         data.Passport = [{ url: passportImage }];
       }
-      if (!data['member ID']) {
-        data['member ID'] = uuidv4();
+      if (signatureImage) {
+        data.Signature = [{ url: signatureImage }];
       }
       if (onSubmit) {
         await onSubmit(data);
-        toast.success('Member saved successfully');
         if (onClose) onClose();
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast.error('Failed to save member');
     }
   };
 
   return (
     <Form {...methods}>
       <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">
-        <FormFields methods={methods} signatureRef={signatureRef} passportImage={passportImage} setPassportImage={setPassportImage} />
+        <FormFields
+          methods={methods}
+          passportImage={passportImage}
+          setPassportImage={setPassportImage}
+          signatureImage={signatureImage}
+          setSignatureImage={setSignatureImage}
+        />
         <Button type="submit" className="w-full">
           {member ? 'Update' : 'Create'} Member
         </Button>

@@ -1,23 +1,24 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { deleteMember, getMembers, updateMember, createMember } from '../lib/airtable';
-import MemberForm from './MemberForm';
-import MemberView from './MemberView';
-import { Alert, AlertDescription } from './ui/alert';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
-import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { QRCodeSVG } from 'qrcode.react';
-import { Loader2, Search } from 'lucide-react';
-import { Input } from './ui/input';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+import { deleteMember, getMembers, updateMember, createMember } from "../lib/airtable";
+import MemberForm from "./MemberForm";
+import MemberView from "./MemberView";
+import { Alert, AlertDescription } from "./ui/alert";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import { Button } from "./ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { QRCodeSVG } from "qrcode.react";
+import { Loader2, Search } from "lucide-react";
+import { Input } from "./ui/input";
+import { debounce } from "lodash";
 
 const MemberList = () => {
   const queryClient = useQueryClient();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const { data: members, isLoading, error } = useQuery({ 
-    queryKey: ['members'], 
+    queryKey: ["members"], 
     queryFn: getMembers,
     retry: 3,
   });
@@ -31,36 +32,36 @@ const MemberList = () => {
     delete: useMutation({
       mutationFn: deleteMember,
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['members'] });
-        toast.success('Member deleted successfully');
+        queryClient.invalidateQueries({ queryKey: ["members"] });
+        toast.success("Member deleted successfully");
       },
       onError: (error) => {
-        console.error('Error deleting member:', error);
-        toast.error('Failed to delete member');
+        console.error("Error deleting member:", error);
+        toast.error("Failed to delete member");
       },
     }),
     update: useMutation({
       mutationFn: (data) => updateMember(data.id, data),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['members'] });
-        toast.success('Member updated successfully');
+        queryClient.invalidateQueries({ queryKey: ["members"] });
+        toast.success("Member updated successfully");
         setIsEditDialogOpen(false);
       },
       onError: (error) => {
-        console.error('Error updating member:', error);
-        toast.error('Failed to update member');
+        console.error("Error updating member:", error);
+        toast.error("Failed to update member");
       },
     }),
     create: useMutation({
       mutationFn: createMember,
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['members'] });
-        toast.success('Member created successfully');
+        queryClient.invalidateQueries({ queryKey: ["members"] });
+        toast.success("Member created successfully");
         setIsAddDialogOpen(false);
       },
       onError: (error) => {
-        console.error('Error creating member:', error);
-        toast.error('Failed to create member');
+        console.error("Error creating member:", error);
+        toast.error("Failed to create member");
       },
     }),
   };
@@ -87,10 +88,18 @@ const MemberList = () => {
     mutations.create.mutate(data);
   };
 
+  const debouncedSearch = debounce((term) => {
+    setSearchTerm(term);
+  }, 300);
+
+  const handleSearchChange = (e) => {
+    debouncedSearch(e.target.value);
+  };
+
   const filteredMembers = members?.filter(member => 
-    member.FirstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.LastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member['member ID'].toLowerCase().includes(searchTerm.toLowerCase())
+    member.FirstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.LastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member["member ID"]?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (error) return <Alert variant="destructive"><AlertDescription>Error loading members: {error.message}</AlertDescription></Alert>;
@@ -101,8 +110,7 @@ const MemberList = () => {
         <Input
           type="text"
           placeholder="Search members..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           className="mr-2"
           disabled={isLoading}
         />
@@ -144,7 +152,7 @@ const MemberList = () => {
               <TableRow key={member.id}>
                 <TableCell>{member.Gender}</TableCell>
                 <TableCell>{`${member.FirstName} ${member.LastName}`}</TableCell>
-                <TableCell>{member['ID Printed'] ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{member["ID Printed"] ? "Yes" : "No"}</TableCell>
                 <TableCell>
                   {member.Passport && member.Passport[0] && (
                     <img src={member.Passport[0].url} alt="Passport" className="w-10 h-10 object-cover" />
@@ -156,17 +164,17 @@ const MemberList = () => {
                   )}
                 </TableCell>
                 <TableCell>
-                  <QRCodeSVG value={member['member ID']} size={40} />
+                  <QRCodeSVG value={member["member ID"]} size={40} />
                 </TableCell>
                 <TableCell>
                   <Button onClick={() => handleView(member)} variant="outline" className="mr-2">View</Button>
                   <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">
-                    {mutations.update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Edit'}
+                    {mutations.update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Edit"}
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive">
-                        {mutations.delete.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Delete'}
+                        {mutations.delete.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
