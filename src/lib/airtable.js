@@ -1,6 +1,7 @@
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import Airtable from 'airtable';
+import { uploadImage } from './cloudinary';
 
 const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
 const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
@@ -43,12 +44,14 @@ export const createMember = async (data) => {
   try {
     const { id, ...fieldsToCreate } = data;
     
-    // Convert base64 image data to attachments
+    // Upload images to Cloudinary and get URLs
     if (fieldsToCreate.Passport && fieldsToCreate.Passport[0]?.url.startsWith('data:')) {
-      fieldsToCreate.Passport = [{ url: await uploadBase64Image(fieldsToCreate.Passport[0].url) }];
+      const passportUrl = await uploadImage(dataURLtoFile(fieldsToCreate.Passport[0].url, 'passport.jpg'));
+      fieldsToCreate.Passport = [{ url: passportUrl }];
     }
     if (fieldsToCreate.Signature && fieldsToCreate.Signature[0]?.url.startsWith('data:')) {
-      fieldsToCreate.Signature = [{ url: await uploadBase64Image(fieldsToCreate.Signature[0].url) }];
+      const signatureUrl = await uploadImage(dataURLtoFile(fieldsToCreate.Signature[0].url, 'signature.png'));
+      fieldsToCreate.Signature = [{ url: signatureUrl }];
     }
 
     const record = await table.create(fieldsToCreate);
@@ -68,12 +71,14 @@ export const updateMember = async (id, data) => {
   try {
     const { id: _, ...fieldsToUpdate } = data;
 
-    // Convert base64 image data to attachments
+    // Upload images to Cloudinary and get URLs
     if (fieldsToUpdate.Passport && fieldsToUpdate.Passport[0]?.url.startsWith('data:')) {
-      fieldsToUpdate.Passport = [{ url: await uploadBase64Image(fieldsToUpdate.Passport[0].url) }];
+      const passportUrl = await uploadImage(dataURLtoFile(fieldsToUpdate.Passport[0].url, 'passport.jpg'));
+      fieldsToUpdate.Passport = [{ url: passportUrl }];
     }
     if (fieldsToUpdate.Signature && fieldsToUpdate.Signature[0]?.url.startsWith('data:')) {
-      fieldsToUpdate.Signature = [{ url: await uploadBase64Image(fieldsToUpdate.Signature[0].url) }];
+      const signatureUrl = await uploadImage(dataURLtoFile(fieldsToUpdate.Signature[0].url, 'signature.png'));
+      fieldsToUpdate.Signature = [{ url: signatureUrl }];
     }
 
     const record = await table.update(id, fieldsToUpdate);
@@ -99,12 +104,17 @@ export const deleteMember = async (id) => {
   }
 };
 
-// Helper function to upload base64 image data
-const uploadBase64Image = async (base64Data) => {
-  // Implementation depends on your image hosting solution
-  // For this example, we'll just return the base64 data
-  // In a real scenario, you'd upload this to a file hosting service and return the URL
-  return base64Data;
+// Helper function to convert data URL to File object
+const dataURLtoFile = (dataurl, filename) => {
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
 };
 
 // Dummy data for preview

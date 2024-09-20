@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import SignatureCanvas from 'react-signature-canvas';
 import { useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { CloudinaryImage } from '../lib/cloudinary';
 
 const FormFields = ({ methods, signatureRef, passportImage, setPassportImage }) => (
   <>
@@ -166,7 +167,7 @@ const FormFields = ({ methods, signatureRef, passportImage, setPassportImage }) 
       </FormControl>
     </FormItem>
     {passportImage && (
-      <img src={passportImage} alt="Passport" className="w-32 h-32 object-cover mt-2" />
+      <CloudinaryImage publicId={passportImage} alt="Passport" width={128} height={128} />
     )}
     <div>
       <FormLabel>Signature</FormLabel>
