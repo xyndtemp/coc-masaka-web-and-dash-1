@@ -170,10 +170,13 @@ const FormFields = ({ methods, signatureRef, passportImage, setPassportImage }) 
     )}
     <div>
       <FormLabel>Signature</FormLabel>
-      <SignatureCanvas
-        ref={signatureRef}
-        canvasProps={{width: 300, height: 150, className: 'border border-gray-300'}}
-      />
+      <div className="border border-gray-300 bg-white">
+        <SignatureCanvas
+          ref={signatureRef}
+          canvasProps={{width: 300, height: 150, className: 'signature-canvas'}}
+          backgroundColor="white"
+        />
+      </div>
       <Button type="button" onClick={() => signatureRef.current.clear()} className="mt-2">Clear Signature</Button>
     </div>
   </>

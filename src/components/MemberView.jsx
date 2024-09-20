@@ -25,7 +25,9 @@ const MemberView = ({ member }) => {
         {member.Signature && member.Signature[0] && (
           <div>
             <strong>Signature:</strong>
-            <img src={member.Signature[0].url} alt="Signature" className="w-64 h-32 object-contain mt-2" />
+            <div className="bg-white">
+              <img src={member.Signature[0].url} alt="Signature" className="w-64 h-32 object-contain mt-2" />
+            </div>
           </div>
         )}
         <div>
