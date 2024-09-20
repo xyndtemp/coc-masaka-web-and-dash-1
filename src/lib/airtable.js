@@ -1,7 +1,6 @@
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import Airtable from 'airtable';
-import { uploadImage } from './cloudinary';
 
 const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
 const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
@@ -43,17 +42,6 @@ export const createMember = async (data) => {
 
   try {
     const { id, ...fieldsToCreate } = data;
-    
-    // Upload images to Cloudinary and get URLs
-    if (fieldsToCreate.Passport && fieldsToCreate.Passport[0]?.url.startsWith('data:')) {
-      const passportUrl = await uploadImage(dataURLtoFile(fieldsToCreate.Passport[0].url, 'passport.jpg'));
-      fieldsToCreate.Passport = [{ url: passportUrl }];
-    }
-    if (fieldsToCreate.Signature && fieldsToCreate.Signature[0]?.url.startsWith('data:')) {
-      const signatureUrl = await uploadImage(dataURLtoFile(fieldsToCreate.Signature[0].url, 'signature.png'));
-      fieldsToCreate.Signature = [{ url: signatureUrl }];
-    }
-
     const record = await table.create(fieldsToCreate);
     return { id: record.id, ...record.fields };
   } catch (error) {
@@ -70,17 +58,6 @@ export const updateMember = async (id, data) => {
 
   try {
     const { id: _, ...fieldsToUpdate } = data;
-
-    // Upload images to Cloudinary and get URLs
-    if (fieldsToUpdate.Passport && fieldsToUpdate.Passport[0]?.url.startsWith('data:')) {
-      const passportUrl = await uploadImage(dataURLtoFile(fieldsToUpdate.Passport[0].url, 'passport.jpg'));
-      fieldsToUpdate.Passport = [{ url: passportUrl }];
-    }
-    if (fieldsToUpdate.Signature && fieldsToUpdate.Signature[0]?.url.startsWith('data:')) {
-      const signatureUrl = await uploadImage(dataURLtoFile(fieldsToUpdate.Signature[0].url, 'signature.png'));
-      fieldsToUpdate.Signature = [{ url: signatureUrl }];
-    }
-
     const record = await table.update(id, fieldsToUpdate);
     return { id: record.id, ...record.fields };
   } catch (error) {
@@ -102,19 +79,6 @@ export const deleteMember = async (id) => {
     toast.error('Failed to delete member');
     throw error;
   }
-};
-
-// Helper function to convert data URL to File object
-const dataURLtoFile = (dataurl, filename) => {
-  const arr = dataurl.split(',');
-  const mime = arr[0].match(/:(.*?);/)[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], filename, { type: mime });
 };
 
 // Dummy data for preview

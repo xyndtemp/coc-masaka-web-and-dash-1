@@ -31,7 +31,7 @@ export const initializeCloudinaryWidget = (callback) => {
 };
 
 export const CloudinaryImage = ({ publicId, alt, width, height }) => {
-  const myImage = cld.image(publicId).resize(fill().width(width).height(height));
+  const myImage = cld.image(publicId).resize(`fill().width(${width}).height(${height})`);
   const imageUrl = myImage.toURL();
   
   return {
