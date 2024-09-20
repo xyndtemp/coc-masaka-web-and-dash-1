@@ -3,19 +3,17 @@ import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { initializeCloudinaryWidget } from '../lib/cloudinary';
 
 const FormFields = ({ methods, passportImage, setPassportImage, signatureImage, setSignatureImage }) => {
   const uploadPassportWidget = useRef();
   const uploadSignatureWidget = useRef();
 
-  const initializeWidgets = () => {
+  useEffect(() => {
     uploadPassportWidget.current = initializeCloudinaryWidget((url) => setPassportImage(url));
     uploadSignatureWidget.current = initializeCloudinaryWidget((url) => setSignatureImage(url));
-  };
-
-  useState(initializeWidgets, []);
+  }, [setPassportImage, setSignatureImage]);
 
   return (
     <>
