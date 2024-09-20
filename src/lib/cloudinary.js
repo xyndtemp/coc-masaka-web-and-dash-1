@@ -1,7 +1,6 @@
 import { toast } from 'sonner';
 
 const cloudName = import.meta.env.VITE_CLOUD_NAME;
-const uploadPreset = import.meta.env.VITE_UPLOAD_PRESET;
 
 export const initializeCloudinaryWidget = (callback, options = {}) => {
   return new Promise((resolve, reject) => {
@@ -25,11 +24,11 @@ const createWidget = (callback, options, resolve) => {
   const widget = window.cloudinary.createUploadWidget(
     {
       cloudName: cloudName,
-      uploadPreset: uploadPreset,
+      uploadPreset: options.uploadPreset,
       sources: ["local", "camera"],
       multiple: false,
       maxFiles: 1,
-      ...options,
+      maxFileSize: options.maxFileSize,
     },
     (error, result) => {
       if (!error && result && result.event === "success") {
@@ -42,12 +41,4 @@ const createWidget = (callback, options, resolve) => {
     }
   );
   resolve(widget);
-};
-
-export const openCloudinaryWidget = async (widget) => {
-  if (widget) {
-    widget.open();
-  } else {
-    toast.error('Cloudinary widget is not initialized');
-  }
 };
