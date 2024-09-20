@@ -15,7 +15,7 @@ const MemberView = ({ member }) => {
         <p><strong>Marital Status:</strong> {member['Marital Status']}</p>
         <p><strong>Address:</strong> {member.Address}</p>
         <p><strong>Nationality:</strong> {member.Nationality}</p>
-        <p><strong>L.G.A:</strong> {member['L.G.A']}</p>
+        <p><strong>LGA:</strong> {member['LGA']}</p>
         {member.Passport && member.Passport[0] && (
           <div>
             <strong>Passport:</strong>

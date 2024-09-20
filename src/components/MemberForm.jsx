@@ -136,10 +136,10 @@ const FormFields = ({ methods, signatureRef, passportImage, setPassportImage }) 
     />
     <FormField
       control={methods.control}
-      name="L.G.A"
+      name="LGA"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>L.G.A</FormLabel>
+          <FormLabel>LGA</FormLabel>
           <FormControl>
             <Input {...field} />
           </FormControl>
@@ -195,7 +195,7 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
       'Marital Status': '',
       'Address': '',
       'Nationality': '',
-      'L.G.A': '',
+      'LGA': '',
     },
   });
 

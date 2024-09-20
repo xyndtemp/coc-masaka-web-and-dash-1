@@ -98,7 +98,7 @@ const dummyData = [
     'Marital Status': 'Married',
     'Address': '123 Main St, Masaka, Nigeria',
     'Nationality': 'Nigerian',
-    'L.G.A': 'Jos North',
+    'LGA': 'Jos North',
     'Passport': [{ url: 'https://via.placeholder.com/150?text=Passport' }]
   },
   {
@@ -115,7 +115,7 @@ const dummyData = [
     'Marital Status': 'Single',
     'Address': '456 Church Rd, Masaka, Nigeria',
     'Nationality': 'Nigerian',
-    'L.G.A': 'Uyo',
+    'LGA': 'Uyo',
     'Passport': [{ url: 'https://via.placeholder.com/150?text=Passport' }]
   }
 ];

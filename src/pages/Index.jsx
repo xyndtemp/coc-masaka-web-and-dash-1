@@ -125,9 +125,6 @@ const AddMemberButton = ({
   <div className="mb-4">
     {airtableConnected && (
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger asChild>
-          <Button>Add New Member</Button>
-        </DialogTrigger>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Member</DialogTitle>
