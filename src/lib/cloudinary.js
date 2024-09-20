@@ -1,5 +1,4 @@
 import { Cloudinary } from "@cloudinary/url-gen";
-import { AdvancedImage } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 
 const cloudName = import.meta.env.VITE_CLOUD_NAME;
@@ -43,8 +42,14 @@ export const uploadImage = async (file) => {
 
 export const CloudinaryImage = ({ publicId, alt, width, height }) => {
   const myImage = cld.image(publicId).resize(fill().width(width).height(height));
-
-  return <AdvancedImage cldImg={myImage} alt={alt} />;
+  const imageUrl = myImage.toURL();
+  
+  return {
+    src: imageUrl,
+    alt: alt,
+    width: width,
+    height: height
+  };
 };
 
 export default cld;
