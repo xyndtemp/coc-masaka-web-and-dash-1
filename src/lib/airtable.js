@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
+import Airtable from 'airtable';
 
 const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
 const baseId = import.meta.env.VITE_AIRTABLE_BASE_ID;
@@ -8,7 +9,6 @@ const tableName = import.meta.env.VITE_AIRTABLE_TABLE_NAME;
 let base, table;
 
 if (apiKey && baseId && tableName) {
-  const Airtable = require('airtable');
   base = new Airtable({ apiKey }).base(baseId);
   table = base(tableName);
 }
