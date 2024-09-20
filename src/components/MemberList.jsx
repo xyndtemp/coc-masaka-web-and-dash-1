@@ -1,15 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { deleteMember, getMembers, updateMember } from '../lib/airtable';
+import { deleteMember, getMembers, updateMember, createMember } from '../lib/airtable';
 import MemberForm from './MemberForm';
 import MemberView from './MemberView';
 import { Alert, AlertDescription } from './ui/alert';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './ui/alert-dialog';
 import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import Barcode from 'react-barcode';
+import { QRCodeSVG } from 'qrcode.react';
 
 const MemberList = () => {
   const queryClient = useQueryClient();
@@ -22,6 +22,7 @@ const MemberList = () => {
   const [viewingMember, setViewingMember] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const mutations = {
     delete: useMutation({
@@ -47,6 +48,18 @@ const MemberList = () => {
         toast.error('Failed to update member');
       },
     }),
+    create: useMutation({
+      mutationFn: createMember,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['members'] });
+        toast.success('Member created successfully');
+        setIsAddDialogOpen(false);
+      },
+      onError: (error) => {
+        console.error('Error creating member:', error);
+        toast.error('Failed to create member');
+      },
+    }),
   };
 
   const handleEdit = (member) => {
@@ -67,11 +80,29 @@ const MemberList = () => {
     mutations.update.mutate({ id: editingMember.id, ...data });
   };
 
+  const handleCreate = (data) => {
+    mutations.create.mutate(data);
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <Alert variant="destructive"><AlertDescription>Error loading members: {error.message}</AlertDescription></Alert>;
 
   return (
     <>
+      <div className="mb-4">
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>Add New Member</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Add New Member</DialogTitle>
+            </DialogHeader>
+            <MemberForm onClose={() => setIsAddDialogOpen(false)} onSubmit={handleCreate} />
+          </DialogContent>
+        </Dialog>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -80,7 +111,7 @@ const MemberList = () => {
             <TableHead>ID Printed</TableHead>
             <TableHead>Passport</TableHead>
             <TableHead>Signature</TableHead>
-            <TableHead>Barcode</TableHead>
+            <TableHead>QR Code</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -101,7 +132,7 @@ const MemberList = () => {
                 )}
               </TableCell>
               <TableCell>
-                <Barcode value={member['member ID']} height={30} width={1} />
+                <QRCodeSVG value={member['member ID']} size={40} />
               </TableCell>
               <TableCell>
                 <Button onClick={() => handleView(member)} variant="outline" className="mr-2">View</Button>
@@ -130,7 +161,7 @@ const MemberList = () => {
       </Table>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Member</DialogTitle>
           </DialogHeader>
@@ -139,7 +170,7 @@ const MemberList = () => {
       </Dialog>
 
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>View Member</DialogTitle>
           </DialogHeader>

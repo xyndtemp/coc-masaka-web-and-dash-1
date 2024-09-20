@@ -6,9 +6,7 @@ import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import SignatureCanvas from 'react-signature-canvas';
 import { useRef, useState } from 'react';
-import { ScrollArea } from './ui/scroll-area';
 import { v4 as uuidv4 } from 'uuid';
-import Barcode from 'react-barcode';
 
 const FormFields = ({ methods, signatureRef, passportImage, setPassportImage }) => (
   <>
@@ -189,7 +187,6 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
       'Gender': '',
       'FirstName': '',
       'LastName': '',
-      'barcode': '',
       'Phone Number': '',
       'Email': '',
       'Marital Status': '',
@@ -214,7 +211,6 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
       if (!data['member ID']) {
         data['member ID'] = uuidv4();
       }
-      data.barcode = data['member ID'];
       if (onSubmit) {
         await onSubmit(data);
         toast.success('Member saved successfully');
@@ -229,13 +225,7 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
   return (
     <Form {...methods}>
       <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">
-        <ScrollArea className="h-[60vh] pr-4">
-          <FormFields methods={methods} signatureRef={signatureRef} passportImage={passportImage} setPassportImage={setPassportImage} />
-          <div className="mt-4">
-            <FormLabel>Barcode</FormLabel>
-            <Barcode value={member?.['member ID'] || 'New Member'} />
-          </div>
-        </ScrollArea>
+        <FormFields methods={methods} signatureRef={signatureRef} passportImage={passportImage} setPassportImage={setPassportImage} />
         <Button type="submit" className="w-full">
           {member ? 'Update' : 'Create'} Member
         </Button>

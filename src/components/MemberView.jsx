@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { QRCodeSVG } from 'qrcode.react';
 
 const MemberView = ({ member }) => {
   return (
@@ -9,7 +10,6 @@ const MemberView = ({ member }) => {
       <CardContent className="space-y-4">
         <p><strong>Member ID:</strong> {member['member ID']}</p>
         <p><strong>ID Printed:</strong> {member['ID Printed'] ? 'Yes' : 'No'}</p>
-        <p><strong>Barcode:</strong> {member.barcode}</p>
         <p><strong>Phone Number:</strong> {member['Phone Number']}</p>
         <p><strong>Email:</strong> {member.Email}</p>
         <p><strong>Marital Status:</strong> {member['Marital Status']}</p>
@@ -28,12 +28,10 @@ const MemberView = ({ member }) => {
             <img src={member.Signature[0].url} alt="Signature" className="w-64 h-32 object-contain mt-2" />
           </div>
         )}
-        {member.BarcodeImage && member.BarcodeImage[0] && (
-          <div>
-            <strong>Barcode Image:</strong>
-            <img src={member.BarcodeImage[0].url} alt="Barcode" className="w-64 h-32 object-contain mt-2" />
-          </div>
-        )}
+        <div>
+          <strong>QR Code:</strong>
+          <QRCodeSVG value={member['member ID']} size={128} />
+        </div>
       </CardContent>
     </Card>
   );
