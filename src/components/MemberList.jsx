@@ -10,6 +10,7 @@ import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { QRCodeSVG } from 'qrcode.react';
+import { Loader2 } from 'lucide-react';
 
 const MemberList = () => {
   const queryClient = useQueryClient();
@@ -84,7 +85,7 @@ const MemberList = () => {
     mutations.create.mutate(data);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div>;
   if (error) return <Alert variant="destructive"><AlertDescription>Error loading members: {error.message}</AlertDescription></Alert>;
 
   return (
@@ -128,7 +129,7 @@ const MemberList = () => {
               </TableCell>
               <TableCell>
                 {member.Signature && member.Signature[0] && (
-                  <img src={member.Signature[0].url} alt="Signature" className="w-10 h-10 object-cover" />
+                  <img src={member.Signature[0].url} alt="Signature" className="w-10 h-10 object-contain bg-white" />
                 )}
               </TableCell>
               <TableCell>
@@ -136,10 +137,14 @@ const MemberList = () => {
               </TableCell>
               <TableCell>
                 <Button onClick={() => handleView(member)} variant="outline" className="mr-2">View</Button>
-                <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
+                <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">
+                  {mutations.update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Edit'}
+                </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive">Delete</Button>
+                    <Button variant="destructive">
+                      {mutations.delete.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Delete'}
+                    </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>

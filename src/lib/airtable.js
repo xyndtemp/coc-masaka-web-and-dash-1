@@ -42,6 +42,15 @@ export const createMember = async (data) => {
 
   try {
     const { id, ...fieldsToCreate } = data;
+    
+    // Convert base64 image data to attachments
+    if (fieldsToCreate.Passport && fieldsToCreate.Passport[0]?.url.startsWith('data:')) {
+      fieldsToCreate.Passport = [{ url: await uploadBase64Image(fieldsToCreate.Passport[0].url) }];
+    }
+    if (fieldsToCreate.Signature && fieldsToCreate.Signature[0]?.url.startsWith('data:')) {
+      fieldsToCreate.Signature = [{ url: await uploadBase64Image(fieldsToCreate.Signature[0].url) }];
+    }
+
     const record = await table.create(fieldsToCreate);
     return { id: record.id, ...record.fields };
   } catch (error) {
@@ -58,6 +67,15 @@ export const updateMember = async (id, data) => {
 
   try {
     const { id: _, ...fieldsToUpdate } = data;
+
+    // Convert base64 image data to attachments
+    if (fieldsToUpdate.Passport && fieldsToUpdate.Passport[0]?.url.startsWith('data:')) {
+      fieldsToUpdate.Passport = [{ url: await uploadBase64Image(fieldsToUpdate.Passport[0].url) }];
+    }
+    if (fieldsToUpdate.Signature && fieldsToUpdate.Signature[0]?.url.startsWith('data:')) {
+      fieldsToUpdate.Signature = [{ url: await uploadBase64Image(fieldsToUpdate.Signature[0].url) }];
+    }
+
     const record = await table.update(id, fieldsToUpdate);
     return { id: record.id, ...record.fields };
   } catch (error) {
@@ -81,6 +99,14 @@ export const deleteMember = async (id) => {
   }
 };
 
+// Helper function to upload base64 image data
+const uploadBase64Image = async (base64Data) => {
+  // Implementation depends on your image hosting solution
+  // For this example, we'll just return the base64 data
+  // In a real scenario, you'd upload this to a file hosting service and return the URL
+  return base64Data;
+};
+
 // Dummy data for preview
 const dummyData = [
   {
@@ -91,8 +117,6 @@ const dummyData = [
     'FirstName': 'James Dakom',
     'LastName': 'Golu',
     'Signature': [{ url: 'https://via.placeholder.com/150?text=Signature' }],
-    'BarcodeImage': [{ url: 'https://via.placeholder.com/150?text=Barcode' }],
-    'barcode': '26ac9d48-b1fe-4571-8e6c-2a62fe7b4c77',
     'Phone Number': '+234 123 456 7890',
     'Email': 'james.golu@example.com',
     'Marital Status': 'Married',
@@ -108,8 +132,6 @@ const dummyData = [
     'Gender': 'Sis.',
     'FirstName': 'Oto-Obong Daniel',
     'LastName': 'Okon',
-    'BarcodeImage': [{ url: 'https://via.placeholder.com/150?text=Barcode' }],
-    'barcode': 'b0d6d8e6-3a8d-4374-a829-16ea59c8ef9a',
     'Phone Number': '+234 987 654 3210',
     'Email': 'oto.okon@example.com',
     'Marital Status': 'Single',
