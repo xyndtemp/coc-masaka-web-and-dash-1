@@ -170,10 +170,10 @@ const FormFields = ({ methods, signatureRef, passportImage, setPassportImage }) 
     )}
     <div>
       <FormLabel>Signature</FormLabel>
-      <div className="border border-gray-300 bg-white">
+      <div className="border border-gray-300 bg-white h-40">
         <SignatureCanvas
           ref={signatureRef}
-          canvasProps={{width: 300, height: 150, className: 'signature-canvas'}}
+          canvasProps={{width: '100%', height: '100%', className: 'signature-canvas'}}
           backgroundColor="white"
         />
       </div>
