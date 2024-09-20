@@ -1,9 +1,9 @@
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { useState } from 'react';
 import ImageUpload from './ImageUpload';
 
 const MemberForm = ({ member, onClose, onSubmit }) => {
@@ -50,18 +50,14 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
         <ImageUpload
           value={passportImage}
           onImageChange={setPassportImage}
-          uploadPreset={import.meta.env.VITE_UPLOAD_PRESET}
           uploadText="Attach a Passport"
           editText="Change Passport"
-          maxFileSize={500000}
         />
         <ImageUpload
           value={signatureImage}
           onImageChange={setSignatureImage}
-          uploadPreset={import.meta.env.VITE_UPLOAD_PRESET}
           uploadText="Attach a Signature"
           editText="Change Signature"
-          maxFileSize={500000}
         />
         <Button type="submit" className="w-full">
           {member ? 'Update' : 'Create'} Member

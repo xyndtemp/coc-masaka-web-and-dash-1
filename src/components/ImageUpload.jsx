@@ -1,25 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Loader2 } from 'lucide-react';
-import { initializeCloudinaryWidget } from '../lib/cloudinary';
+import { uploadToVercelBlob } from '../lib/vercelBlob';
 
-const ImageUpload = ({ value, onImageChange, uploadPreset, uploadText, editText, maxFileSize }) => {
+const ImageUpload = ({ value, onImageChange, uploadText, editText }) => {
   const [isUploading, setIsUploading] = useState(false);
-  const [widget, setWidget] = useState(null);
 
-  useEffect(() => {
-    initializeCloudinaryWidget((result) => {
-      setIsUploading(false);
-      onImageChange(result);
-    }, { uploadPreset, maxFileSize }).then(setWidget);
-  }, [onImageChange, uploadPreset, maxFileSize]);
+  const handleUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const handleUpload = () => {
     setIsUploading(true);
-    if (widget) {
-      widget.open();
-    } else {
-      console.error('Cloudinary widget is not initialized');
+    try {
+      const imageUrl = await uploadToVercelBlob(file);
+      onImageChange(imageUrl);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    } finally {
       setIsUploading(false);
     }
   };
@@ -27,10 +24,17 @@ const ImageUpload = ({ value, onImageChange, uploadPreset, uploadText, editText,
   return (
     <div className="flex flex-col items-center">
       {value && <img src={value} alt="Uploaded" className="w-32 h-32 object-cover mb-2" />}
-      <Button onClick={handleUpload} disabled={isUploading}>
+      <Button as="label" htmlFor="file-upload" disabled={isUploading}>
         {isUploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
         {value ? editText : uploadText}
       </Button>
+      <input
+        id="file-upload"
+        type="file"
+        accept="image/*"
+        onChange={handleUpload}
+        style={{ display: 'none' }}
+      />
     </div>
   );
 };
