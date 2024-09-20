@@ -1,4 +1,3 @@
-import testUsers from '../data/testUsers.json';
 import { toast } from 'sonner';
 
 const apiKey = import.meta.env.VITE_AIRTABLE_API_KEY;
@@ -19,7 +18,7 @@ export const isAirtableConnected = () => {
 
 export const getMembers = async () => {
   if (!isAirtableConnected()) {
-    return testUsers;
+    return [];
   }
 
   try {

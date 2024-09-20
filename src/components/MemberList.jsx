@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { format, parseISO } from 'date-fns';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { deleteMember, getMembers, updateMember } from '../lib/airtable';
@@ -68,17 +67,17 @@ const MemberList = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Birthday</TableHead>
+            <TableHead>Gender</TableHead>
+            <TableHead>Phone Number</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {members && members.map((member) => (
             <TableRow key={member.id}>
-              <TableCell>{member.Name || 'N/A'}</TableCell>
-              <TableCell>{member.email || 'N/A'}</TableCell>
-              <TableCell>{member.Birthday ? format(parseISO(member.Birthday), 'MMM dd, yyyy') : 'N/A'}</TableCell>
+              <TableCell>{`${member.FirstName} ${member.LastName}`}</TableCell>
+              <TableCell>{member.Gender}</TableCell>
+              <TableCell>{member['Phone Number'] || 'N/A'}</TableCell>
               <TableCell>
                 <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">Edit</Button>
                 <AlertDialog>
