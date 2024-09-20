@@ -6,6 +6,148 @@ import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import SignatureCanvas from 'react-signature-canvas';
 import { useRef } from 'react';
+import { ScrollArea } from './ui/scroll-area';
+
+const FormFields = ({ methods }) => (
+  <>
+    <FormField
+      control={methods.control}
+      name="FirstName"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>First Name</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="LastName"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Last Name</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="Gender"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Gender</FormLabel>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectItem value="Bro.">Brother</SelectItem>
+              <SelectItem value="Sis.">Sister</SelectItem>
+            </SelectContent>
+          </Select>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="ID Printed"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>ID Printed</FormLabel>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder="Select ID Printed status" />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectItem value="true">Yes</SelectItem>
+              <SelectItem value="false">No</SelectItem>
+            </SelectContent>
+          </Select>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="Phone Number"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Phone Number</FormLabel>
+          <FormControl>
+            <Input {...field} type="tel" />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="Email"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Email</FormLabel>
+          <FormControl>
+            <Input {...field} type="email" />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="Marital Status"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Marital Status</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="Address"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Address</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="Nationality"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Nationality</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="L.G.A"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>L.G.A</FormLabel>
+          <FormControl>
+            <Input {...field} />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+  </>
+);
 
 const MemberForm = ({ member, onClose, onSubmit }) => {
   const methods = useForm({
@@ -47,151 +189,18 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
   return (
     <Form {...methods}>
       <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">
-        <FormField
-          control={methods.control}
-          name="FirstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>First Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="LastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="Gender"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Gender</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select gender" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Bro.">Brother</SelectItem>
-                  <SelectItem value="Sis.">Sister</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="ID Printed"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>ID Printed</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select ID Printed status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="true">Yes</SelectItem>
-                  <SelectItem value="false">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="Phone Number"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone Number</FormLabel>
-              <FormControl>
-                <Input {...field} type="tel" />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="Email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input {...field} type="email" />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="Marital Status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Marital Status</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="Address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="Nationality"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nationality</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={methods.control}
-          name="L.G.A"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>L.G.A</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <div>
-          <FormLabel>Signature</FormLabel>
-          <SignatureCanvas
-            ref={signatureRef}
-            canvasProps={{width: 500, height: 200, className: 'border border-gray-300'}}
-          />
-          <Button type="button" onClick={() => signatureRef.current.clear()} className="mt-2">Clear Signature</Button>
-        </div>
-        <Button type="submit">
+        <ScrollArea className="h-[400px] pr-4">
+          <FormFields methods={methods} />
+          <div>
+            <FormLabel>Signature</FormLabel>
+            <SignatureCanvas
+              ref={signatureRef}
+              canvasProps={{width: 300, height: 150, className: 'border border-gray-300'}}
+            />
+            <Button type="button" onClick={() => signatureRef.current.clear()} className="mt-2">Clear Signature</Button>
+          </div>
+        </ScrollArea>
+        <Button type="submit" className="w-full">
           {member ? 'Update' : 'Create'} Member
         </Button>
       </form>
