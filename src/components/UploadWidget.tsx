@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 import { UploadCloudIcon } from "lucide-react";
 import { loadScript } from "../helpers/load-script";
-import { captureException } from "../overrides/sentry.override";
+import * as Sentry from '@/overrides/sentry.override';
 
 
 const WidgetOptions: cloudinary.Options = {
@@ -125,7 +125,7 @@ const UploadWidget = ({
 
   const onWidgetChange = (error: string | null, result: cloudinary.Result) => {
     if (error) {
-      captureException(error);
+      Sentry.captureException(error);
 
       return;
     } else if (!result) {

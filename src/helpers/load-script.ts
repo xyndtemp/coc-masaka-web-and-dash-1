@@ -1,4 +1,4 @@
-import { captureException } from '@/overrides/sentry.override';
+import * as Sentry from '@/overrides/sentry.override';
 
 export const loadScript = (url: string, key: string) => {
     const id = `${key}-script`;
@@ -26,7 +26,7 @@ export const loadScript = (url: string, key: string) => {
             script.onerror = (e: Event | string) => {
                 const message = `The script ${url} didn't load correctly.`;
 
-                captureException(e, {
+                Sentry.captureException(e, {
                     extra: {
                         message
                     }
