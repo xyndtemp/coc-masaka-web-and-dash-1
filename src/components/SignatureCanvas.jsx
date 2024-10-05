@@ -21,7 +21,9 @@ const SignatureCanvas = ({ onSignatureChange }) => {
     const dataURL = sigCanvas.current.toDataURL();
     try {
       const cloudinaryUrl = await uploadToCloudinary(dataURL);
-      onSignatureChange(cloudinaryUrl);
+      if (typeof onSignatureChange === 'function') {
+        onSignatureChange(cloudinaryUrl);
+    }
     } catch (error) {
       Sentry.captureException(error);
       toast({
