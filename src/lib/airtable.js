@@ -90,14 +90,14 @@ const dummyData = [
     'Gender': 'Bro.',
     'FirstName': 'James Dakom',
     'LastName': 'Golu',
-    'Signature': [{ url: 'https://via.placeholder.com/150?text=Signature' }],
+    'Signature': 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg',
     'Phone Number': '+234 123 456 7890',
     'Email': 'james.golu@example.com',
     'Marital Status': 'Married',
     'Address': '123 Main St, Masaka, Nigeria',
     'Nationality': 'Nigerian',
     'LGA': 'Jos North',
-    'Passport': [{ url: 'https://via.placeholder.com/150?text=Passport' }]
+    'Passport': 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'
   },
   {
     id: '2',
@@ -112,6 +112,6 @@ const dummyData = [
     'Address': '456 Church Rd, Masaka, Nigeria',
     'Nationality': 'Nigerian',
     'LGA': 'Uyo',
-    'Passport': [{ url: 'https://via.placeholder.com/150?text=Passport' }]
+    'Passport': 'https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg'
   }
 ];

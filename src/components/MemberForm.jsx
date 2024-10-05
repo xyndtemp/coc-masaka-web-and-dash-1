@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
@@ -20,28 +20,13 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
       'Address': '',
       'Nationality': '',
       'LGA': '',
+      'Passport': null,
+      'Signature': null,
     },
   });
 
-  const [passportImage, setPassportImage] = useState(member?.Passport?.[0]?.url || null);
-  const [signatureImage, setSignatureImage] = useState(member?.Signature?.[0]?.url || null);
-
-  const onImageUpload = (value, destination) => {
-    if (destination === 'signature') {
-      setSignatureImage(value);
-    } else if (destination === 'passport') {
-      setPassportImage(value);
-    }
-  };
-
   const handleSubmit = async (data) => {
     try {
-      if (passportImage) {
-        data.Passport = [{ url: passportImage }];
-      }
-      if (signatureImage) {
-        data.Signature = [{ url: signatureImage }];
-      }
       if (onSubmit) {
         await onSubmit(data);
         if (onClose) onClose();
@@ -55,18 +40,7 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     <Form {...methods}>
       <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">
         <FormFields methods={methods} />
-        <ImageUpload
-          value={passportImage}
-          onImageChange={(value) => onImageUpload(value, 'passport')}
-          uploadText="Attach a Passport"
-          editText="Change Passport"
-        />
-        <ImageUpload
-          value={signatureImage}
-          onImageChange={(value) => onImageUpload(value, 'signature')}
-          uploadText="Attach a Signature"
-          editText="Change Signature"
-        />
+        <ImageUploadFields methods={methods} />
         <Button type="submit" className="w-full">
           {member ? 'Update' : 'Create'} Member
         </Button>
@@ -209,6 +183,49 @@ const FormFields = ({ methods }) => (
           <FormLabel>LGA</FormLabel>
           <FormControl>
             <Input {...field} />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+  </>
+);
+
+const ImageUploadFields = ({ methods }) => (
+  <>
+    <FormField
+      control={methods.control}
+      name="Passport"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Passport</FormLabel>
+          <FormControl>
+            <ImageUpload
+              value={field.value}
+              onImageChange={(info) => field.onChange(info.secure_url)}
+              uploadText="Attach a Passport"
+              editText="Change Passport"
+              uploadPreset="member_passports"
+              croppingAspectRatio={1}
+            />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+    <FormField
+      control={methods.control}
+      name="Signature"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Signature</FormLabel>
+          <FormControl>
+            <ImageUpload
+              value={field.value}
+              onImageChange={(info) => field.onChange(info.secure_url)}
+              uploadText="Attach a Signature"
+              editText="Change Signature"
+              uploadPreset="member_signatures"
+              croppingAspectRatio={3}
+            />
           </FormControl>
         </FormItem>
       )}
