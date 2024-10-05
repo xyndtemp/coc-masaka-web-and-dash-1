@@ -1,0 +1,18 @@
+{
+    "env": "local",
+    "version": "1.0.0",
+    "host": "localhost",
+    "cloudinary": {
+        "uploadPreset": "coc.masaka",
+        "cdnPrefix": "https://res.cloudinary.com/dgeska2qh/image/upload/",
+        "apiKey": "239488157396845",
+        "apiSecret": "9ZtWVh2zws"
+    },
+    "firebase": {
+
+    },
+    "sentry": {
+        "dsn": "https://01e103ceca68ee4dd3716cbb052250c2@o4505487881732096.ingest.us.sentry.io/4508071621165056",
+        "authToken": "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"
+    }
+}

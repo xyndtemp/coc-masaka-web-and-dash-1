@@ -26,6 +26,14 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
   const [passportImage, setPassportImage] = useState(member?.Passport?.[0]?.url || null);
   const [signatureImage, setSignatureImage] = useState(member?.Signature?.[0]?.url || null);
 
+  const onImageUpload = (value, destination) => {
+    if (destination === 'signature') {
+      setSignatureImage(value);
+    } else if (destination === 'passport') {
+      setPassportImage(value);
+    }
+  };
+
   const handleSubmit = async (data) => {
     try {
       if (passportImage) {
@@ -49,13 +57,13 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
         <FormFields methods={methods} />
         <ImageUpload
           value={passportImage}
-          onImageChange={setPassportImage}
+          onImageChange={(value) => onImageUpload(value, 'passport')}
           uploadText="Attach a Passport"
           editText="Change Passport"
         />
         <ImageUpload
           value={signatureImage}
-          onImageChange={setSignatureImage}
+          onImageChange={(value) => onImageUpload(value, 'signature')}
           uploadText="Attach a Signature"
           editText="Change Signature"
         />
