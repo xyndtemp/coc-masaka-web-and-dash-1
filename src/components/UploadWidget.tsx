@@ -1,12 +1,10 @@
-import React from "react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import * as Sentry from "@/overrides/sentry.override";
+import { UploadCloudIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
-import { useToast } from "./ui/use-toast";
-import { UploadCloudIcon } from "lucide-react";
 import { loadScript } from "../helpers/load-script";
-import * as Sentry from '@/overrides/sentry.override';
-
 
 const WidgetOptions: cloudinary.Options = {
   cloudName: "dgeska2qh",
@@ -56,7 +54,7 @@ const UploadWidget = ({
   publicId,
   resourceType = "auto",
   showSkipCropButton = false,
-  sources = ["local", 'camera'],
+  sources = ["local", "camera"],
   text = "Upload",
   uploadPreset,
   id = "upload-widget",

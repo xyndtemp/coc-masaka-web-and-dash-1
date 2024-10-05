@@ -1,28 +1,74 @@
-import * as Sentry from "@sentry/react";
-import defaultConfig from '../config/default.json';
+import { getCurrentScope } from "@sentry/browser";
+import { captureConsoleIntegration } from "@sentry/integrations";
+import type { BrowserOptions } from "@sentry/react";
+import {
+  init,
+  reactRouterV6BrowserTracingIntegration,
+  replayIntegration,
+} from "@sentry/react";
+import type { Integration } from "@sentry/types";
+import defaultConfig from "config/default.json";
+import { useEffect } from "react";
+import {
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType,
+} from "react-router-dom";
 
-const RELEASE_VERSION = import.meta.env.VITE_RELEASE_VERSION || 'unknown';
-const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT || 'development';
-
-Sentry.init({
+const SentryInit = () => {
+  const options: BrowserOptions = {
     dsn: defaultConfig.sentry.dsn,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration(),
-    ],
-    release: RELEASE_VERSION,
-    environment: ENVIRONMENT,
-  // Tracing
-  tracesSampleRate: 1.0, //  Capture 100% of the transactions
-  // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-  tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
-  // Set profilesSampleRate to 1.0 to profile every transaction.
-  // Since profilesSampleRate is relative to tracesSampleRate,
-  // the final profiling rate can be computed as tracesSampleRate * profilesSampleRate
-  // For example, a tracesSampleRate of 0.5 and profilesSampleRate of 0.5 would
-  // results in 25% of transactions being profiled (0.5*0.5=0.25)
-  profilesSampleRate: 1.0,
-  // Session Replay
-  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
-});
+    release: defaultConfig.version,
+    environment: defaultConfig.env,
+    tracesSampleRate: 1.0,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 0.1,
+    tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
+    profilesSampleRate: 1.0,
+  };
+
+  const integrations: Integration[] = [
+    reactRouterV6BrowserTracingIntegration({
+      useEffect,
+      useLocation,
+      useNavigationType,
+      createRoutesFromChildren,
+      matchRoutes,
+      // stripBasename
+    }),
+    replayIntegration(),
+    captureConsoleIntegration({
+      levels: ["error"],
+    }),
+  ];
+
+  // options.tracePropagationTargets = [config.API_HOST || 'localhost'];
+
+  if (defaultConfig.env !== "local") {
+    integrations.push(
+      captureConsoleIntegration({
+        levels: ["error", "warn"],
+      })
+    );
+  }
+
+  options.integrations = integrations;
+
+  init(options);
+
+  getCurrentScope().setTags({
+    version: defaultConfig.version,
+    env: defaultConfig.env,
+    // sessionId: () => {
+    //   return Math.random().toString(36).substring(2, 15);
+    // },
+    // browserId: () => {
+    //   return Math.random().toString(36).substring(2, 15);
+    // },
+  });
+};
+
+SentryInit();
+
+export * from "@sentry/react";
