@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import ImageUpload from './ImageUpload';
+import SignatureCanvas from './SignatureCanvas';
 
 const MemberForm = ({ member, onClose, onSubmit }) => {
   const methods = useForm({
@@ -41,6 +42,7 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
       <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">
         <FormFields methods={methods} />
         <ImageUploadFields methods={methods} />
+        <SignatureField methods={methods} />
         <Button type="submit" className="w-full">
           {member ? 'Update' : 'Create'} Member
         </Button>
@@ -231,6 +233,23 @@ const ImageUploadFields = ({ methods }) => (
       )}
     />
   </>
+);
+
+const SignatureField = ({ methods }) => (
+  <FormField
+    control={methods.control}
+    name="Signature"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>Signature</FormLabel>
+        <FormControl>
+          <SignatureCanvas
+            onSignatureChange={(url) => field.onChange(url)}
+          />
+        </FormControl>
+      </FormItem>
+    )}
+  />
 );
 
 export default MemberForm;
