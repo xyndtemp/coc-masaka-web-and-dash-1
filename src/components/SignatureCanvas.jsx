@@ -1,10 +1,13 @@
 import React, { useRef } from 'react';
 import SignaturePad from 'react-signature-canvas';
 import { Button } from './ui/button';
+import { useToast } from './ui/use-toast';
 import { uploadToCloudinary } from '../lib/cloudinary';
+import * as Sentry from '@/overrides/sentry.override';
 
 const SignatureCanvas = ({ onSignatureChange }) => {
   const sigCanvas = useRef();
+  const { toast } = useToast();
 
   const clear = () => {
     sigCanvas.current.clear();
@@ -20,8 +23,11 @@ const SignatureCanvas = ({ onSignatureChange }) => {
       const cloudinaryUrl = await uploadToCloudinary(dataURL);
       onSignatureChange(cloudinaryUrl);
     } catch (error) {
-      console.error('Error uploading signature:', error);
-      alert('Failed to upload signature. Please try again.');
+      Sentry.captureException(error);
+      toast({
+        title: 'Failed to upload signature. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 
