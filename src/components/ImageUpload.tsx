@@ -3,7 +3,7 @@ import React, { ReactNode, useState } from 'react';
 // import { UploadCloud } from 'lucide-react';
 import UploadWidget from './UploadWidget';
 import { getCloudinaryImage } from '../helpers/image';
-import defaultConfig from '../config/default.json';
+import defaultConfig from '@/config/default.json';
 
 type Props = {
   value?: string;
@@ -45,7 +45,7 @@ const ImageUpload = ({
         minImageWidth={500}
         minImageHeight={500}
         croppingShowDimensions
-        uploadPreset={uploadPreset}
+        uploadPreset={defaultConfig.cloudinary.uploadPreset}
         text={value ? editText : uploadText}
         maxFileSize={maxFileSize}
       />
