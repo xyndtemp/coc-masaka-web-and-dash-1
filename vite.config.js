@@ -14,9 +14,7 @@ export default defineConfig({
 
   plugins: [react(), sentryVitePlugin({
     org: "xyrus-code",
-    project: "coc-masaka-airtable",
-    authToken: config.sentry.authToken
-
+    project: "coc-masaka-airtable"
   })],
 
   resolve: {
