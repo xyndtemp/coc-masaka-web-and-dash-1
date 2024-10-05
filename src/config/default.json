@@ -1,8 +1,9 @@
-{
-    "env": "local",
+    {
+    "env": "development",
     "version": "1.0.0",
     "host": "localhost",
     "cloudinary": {
+        "cloudName": "dgeska2qh",
         "uploadPreset": "coc.masaka",
         "cdnPrefix": "https://res.cloudinary.com/dgeska2qh/image/upload/",
         "apiKey": "239488157396845",
