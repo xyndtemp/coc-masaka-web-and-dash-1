@@ -1,44 +1,20 @@
-import { toast } from 'sonner';
+import { Cloudinary } from "@cloudinary/url-gen";
 
-const cloudName = import.meta.env.VITE_CLOUD_NAME;
+const cld = new Cloudinary({cloud: {cloudName: 'your_cloud_name'}});
 
-export const initializeCloudinaryWidget = (callback, options = {}) => {
-  return new Promise((resolve, reject) => {
-    if (typeof window.cloudinary === 'undefined') {
-      const script = document.createElement('script');
-      script.src = 'https://widget.cloudinary.com/v2.0/global/all.js';
-      script.async = true;
-      script.onload = () => createWidget(callback, options, resolve);
-      script.onerror = () => {
-        toast.error('Failed to load Cloudinary widget');
-        reject(new Error('Failed to load Cloudinary widget'));
-      };
-      document.body.appendChild(script);
-    } else {
-      createWidget(callback, options, resolve);
-    }
-  });
-};
+export const uploadToCloudinary = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'your_upload_preset');
 
-const createWidget = (callback, options, resolve) => {
-  const widget = window.cloudinary.createUploadWidget(
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${cld.config().cloud.cloudName}/image/upload`,
     {
-      cloudName: cloudName,
-      uploadPreset: options.uploadPreset,
-      sources: ["local", "camera"],
-      multiple: false,
-      maxFiles: 1,
-      maxFileSize: options.maxFileSize,
-    },
-    (error, result) => {
-      if (!error && result && result.event === "success") {
-        callback(result.info.secure_url);
-      }
-      if (error) {
-        console.error('Cloudinary Upload Error:', error);
-        toast.error('Failed to upload image');
-      }
+      method: 'POST',
+      body: formData,
     }
   );
-  resolve(widget);
+
+  const data = await response.json();
+  return data.secure_url;
 };
