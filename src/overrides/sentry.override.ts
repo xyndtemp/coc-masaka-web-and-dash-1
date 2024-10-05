@@ -16,15 +16,18 @@ import {
 } from 'react-router-dom';
 import defaultConfig from '../config/default.json';
 
+const RELEASE_VERSION = import.meta.env.VITE_RELEASE_VERSION || 'unknown';
+const ENVIRONMENT = import.meta.env.VITE_ENVIRONMENT || 'development';
+
 
 const SentryInit = () => {
     const options: BrowserOptions = {
-        dsn: defaultConfig.SENTRY.dsn,
+        dsn: defaultConfig.sentry.dsn,
         tracesSampleRate: 1.0,
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 0.1,
-        environment: defaultConfig.version,
-        release: defaultConfig.version,
+        release: RELEASE_VERSION,
+        environment: ENVIRONMENT,
         enabled: Boolean(defaultConfig.env !== 'local') // Prevents new bugs while dev is typing
     };
 
