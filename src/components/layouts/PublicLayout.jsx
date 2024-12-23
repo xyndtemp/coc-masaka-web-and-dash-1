@@ -4,38 +4,45 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuL
 const PublicLayout = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b">
+      <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex justify-between items-center">
-            <Link to="/" className="text-2xl font-bold">COC Masaka</Link>
+            <Link to="/" className="flex items-center gap-2">
+              <img 
+                src="/coc.png" 
+                alt="COC Masaka Logo" 
+                className="w-10 h-10 rounded-lg object-contain transition-transform hover:scale-105"
+              />
+              <span className="text-2xl font-bold">COC Masaka</span>
+            </Link>
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <Link to="/" className="px-4 py-2">Home</Link>
+                  <Link to="/" className="px-4 py-2 hover:text-primary transition-colors">Home</Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link to="/about" className="px-4 py-2">About</Link>
+                  <Link to="/about" className="px-4 py-2 hover:text-primary transition-colors">About</Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link to="/sermons" className="px-4 py-2">Sermons</Link>
+                  <Link to="/sermons" className="px-4 py-2 hover:text-primary transition-colors">Sermons</Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link to="/radio" className="px-4 py-2">Let The Bible Speak</Link>
+                  <Link to="/radio" className="px-4 py-2 hover:text-primary transition-colors">Let The Bible Speak</Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link to="/contact" className="px-4 py-2">Contact</Link>
+                  <Link to="/contact" className="px-4 py-2 hover:text-primary transition-colors">Contact</Link>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </nav>
         </div>
       </header>
-      <main className="flex-1">
+      <main className="flex-1 bg-background">
         {children}
       </main>
-      <footer className="border-t">
+      <footer className="border-t bg-card">
         <div className="container mx-auto px-4 py-8">
-          <p className="text-center">© {new Date().getFullYear()} Church of Christ Masaka. All rights reserved.</p>
+          <p className="text-center text-muted-foreground">© {new Date().getFullYear()} Church of Christ Masaka. All rights reserved.</p>
         </div>
       </footer>
     </div>
