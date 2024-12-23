@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "../ui/navigation-menu";
 
 const PublicLayout = ({ children }) => {
@@ -25,11 +24,6 @@ const PublicLayout = ({ children }) => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link to="/contact" className="px-4 py-2">Contact</Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/admin">
-                    <Button variant="outline">Admin Login</Button>
-                  </Link>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>

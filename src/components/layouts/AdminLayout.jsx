@@ -1,46 +1,94 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useAuth } from "../../context/AuthContext";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "../ui/navigation-menu";
+import { 
+  LayoutDashboard, 
+  Users, 
+  Calendar, 
+  Mic, 
+  Radio, 
+  ChevronLeft, 
+  ChevronRight,
+  LogOut 
+} from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 const AdminLayout = ({ children }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
+  const navItems = [
+    { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
+    { icon: Users, label: "Members", path: "/admin/members" },
+    { icon: Calendar, label: "Attendance", path: "/admin/attendance" },
+    { icon: Mic, label: "Sermons", path: "/admin/sermons" },
+    { icon: Radio, label: "Radio", path: "/admin/radio" },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b bg-gray-100">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex justify-between items-center">
-            <Link to="/admin" className="text-2xl font-bold">Admin Dashboard</Link>
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <Link to="/admin/members" className="px-4 py-2">Members</Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/admin/attendance" className="px-4 py-2">Attendance</Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/admin/sermons" className="px-4 py-2">Sermons</Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/admin/radio" className="px-4 py-2">Radio</Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Button onClick={handleLogout} variant="outline">Logout</Button>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </nav>
+    <div className="min-h-screen flex">
+      {/* Sidebar */}
+      <aside className={cn(
+        "bg-gray-900 text-white transition-all duration-300",
+        collapsed ? "w-16" : "w-64"
+      )}>
+        <div className="p-4 flex justify-between items-center">
+          <h2 className={cn("font-bold transition-all", 
+            collapsed ? "scale-0" : "scale-100"
+          )}>
+            Admin Panel
+          </h2>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setCollapsed(!collapsed)}
+          >
+            {collapsed ? <ChevronRight /> : <ChevronLeft />}
+          </Button>
         </div>
-      </header>
-      <main className="flex-1 container mx-auto px-4 py-8">
+        <nav className="mt-8">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800"
+            >
+              <item.icon className="h-5 w-5" />
+              <span className={cn(
+                "ml-3 transition-all",
+                collapsed ? "hidden" : "block"
+              )}>
+                {item.label}
+              </span>
+            </Link>
+          ))}
+        </nav>
+        <div className="absolute bottom-4 w-full px-4">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start text-gray-300 hover:bg-gray-800"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-5 w-5" />
+            <span className={cn(
+              "ml-3 transition-all",
+              collapsed ? "hidden" : "block"
+            )}>
+              Logout
+            </span>
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-8 bg-gray-100">
         {children}
       </main>
     </div>
