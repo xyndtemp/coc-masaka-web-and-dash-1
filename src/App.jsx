@@ -4,8 +4,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import { navItems } from "./nav-items";
+import { adminNavItems } from "./nav-items";
 import Login from "./pages/Login";
+import Home from "./pages/public/Home";
+import About from "./pages/public/About";
+import Sermons from "./pages/public/Sermons";
+import Radio from "./pages/public/Radio";
+import Contact from "./pages/public/Contact";
 
 const queryClient = new QueryClient();
 
@@ -19,17 +24,29 @@ const AppRoutes = () => {
 
   return (
     <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/sermons" element={<Sermons />} />
+      <Route path="/radio" element={<Radio />} />
+      <Route path="/contact" element={<Contact />} />
+      
+      {/* Auth Routes */}
       <Route
         path="/login"
-        element={isAuthenticated ? <Navigate to="/" /> : <Login />}
+        element={isAuthenticated ? <Navigate to="/admin" /> : <Login />}
       />
-      {navItems.map(({ to, page }) => (
+      
+      {/* Admin Routes */}
+      {adminNavItems.map(({ to, page }) => (
         <Route
           key={to}
           path={to}
           element={<ProtectedRoute>{page}</ProtectedRoute>}
         />
       ))}
+      
+      {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

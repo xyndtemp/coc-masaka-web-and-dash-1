@@ -1,14 +1,39 @@
-import { HomeIcon } from "lucide-react";
-import Index from "./pages/Index.jsx";
+import { HomeIcon, Users, Calendar, Radio, Mic } from "lucide-react";
+import AdminDashboard from "./pages/admin/Dashboard";
+import Members from "./pages/admin/Members";
+import Attendance from "./pages/admin/Attendance";
+import Sermons from "./pages/admin/Sermons";
+import RadioRecordings from "./pages/admin/RadioRecordings";
 
-/**
- * Central place for defining the navigation items. Used for navigation components and routing.
- */
-export const navItems = [
+export const adminNavItems = [
   {
-    title: "Home",
-    to: "/",
+    title: "Dashboard",
+    to: "/admin",
     icon: <HomeIcon className="h-4 w-4" />,
-    page: <Index />,
+    page: <AdminDashboard />,
+  },
+  {
+    title: "Members",
+    to: "/admin/members",
+    icon: <Users className="h-4 w-4" />,
+    page: <Members />,
+  },
+  {
+    title: "Attendance",
+    to: "/admin/attendance",
+    icon: <Calendar className="h-4 w-4" />,
+    page: <Attendance />,
+  },
+  {
+    title: "Sermons",
+    to: "/admin/sermons",
+    icon: <Mic className="h-4 w-4" />,
+    page: <Sermons />,
+  },
+  {
+    title: "Radio",
+    to: "/admin/radio",
+    icon: <Radio className="h-4 w-4" />,
+    page: <RadioRecordings />,
   },
 ];
