@@ -25,23 +25,27 @@ const ImageUpload = ({
     }
 
     try {
-      // Convert file to base64
-      const base64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-      });
-
-      // Create a temporary preview URL
+      // Create a temporary URL for preview
       const previewUrl = URL.createObjectURL(file);
       
+      // Create a temporary URL that Airtable can access
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // Upload to a temporary storage service (like Cloudinary or similar)
+      const response = await fetch('https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      
       onImageChange([{
-        url: base64, // Send base64 to Airtable
+        url: data.secure_url, // Use the URL from Cloudinary
         filename: file.name,
         type: file.type,
         size: file.size,
-        previewUrl // Use this for preview only
+        previewUrl // Use this for local preview only
       }]);
     } catch (error) {
       console.error('Error handling file:', error);
@@ -52,7 +56,7 @@ const ImageUpload = ({
   };
 
   const handleClick = (e) => {
-    e.stopPropagation(); // Prevent modal from closing
+    e.stopPropagation();
     setIsSelecting(true);
     fileInputRef.current?.click();
   };
