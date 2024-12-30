@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from './ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel } from './ui/form';
-import { Input } from './ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import ImageUpload from './ImageUpload';
+import { Form } from './ui/form';
+import FormFields from './members/FormFields';
+import ImageUploadFields from './members/ImageUploadFields';
 import SignatureCanvas from './SignatureCanvas';
 
 const MemberForm = ({ member, onClose, onSubmit }) => {
+  const [pendingUploads, setPendingUploads] = useState({});
   const methods = useForm({
     defaultValues: member || {
       'member ID': '',
@@ -26,10 +26,23 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     },
   });
 
+  const handleImageSelect = (field, info) => {
+    setPendingUploads(prev => ({
+      ...prev,
+      [field]: info
+    }));
+  };
+
   const handleSubmit = async (data) => {
+    // Include any pending uploads in the submission
+    const formData = {
+      ...data,
+      ...pendingUploads
+    };
+
     try {
       if (onSubmit) {
-        await onSubmit(data);
+        await onSubmit(formData);
         if (onClose) onClose();
       }
     } catch (error) {
@@ -41,8 +54,8 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     <Form {...methods}>
       <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4">
         <FormFields methods={methods} />
-        <ImageUploadFields methods={methods} />
-        <SignatureField methods={methods} />
+        <ImageUploadFields methods={methods} onImageSelect={handleImageSelect} />
+        <SignatureCanvas methods={methods} />
         <Button type="submit" className="w-full">
           {member ? 'Update' : 'Create'} Member
         </Button>
@@ -50,206 +63,5 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     </Form>
   );
 };
-
-const FormFields = ({ methods }) => (
-  <>
-    <FormField
-      control={methods.control}
-      name="FirstName"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>First Name</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="LastName"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Last Name</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Gender"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Gender</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select gender" />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              <SelectItem value="Bro.">Brother</SelectItem>
-              <SelectItem value="Sis.">Sister</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="ID Printed"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>ID Printed</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select ID Printed status" />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              <SelectItem value="true">Yes</SelectItem>
-              <SelectItem value="false">No</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Phone Number"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Phone Number</FormLabel>
-          <FormControl>
-            <Input {...field} type="tel" />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Email"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Email</FormLabel>
-          <FormControl>
-            <Input {...field} type="email" />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Marital Status"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Marital Status</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Address"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Address</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Nationality"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Nationality</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="LGA"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>LGA</FormLabel>
-          <FormControl>
-            <Input {...field} />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-  </>
-);
-
-const ImageUploadFields = ({ methods }) => (
-  <>
-    <FormField
-      control={methods.control}
-      name="Passport"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Passport</FormLabel>
-          <FormControl>
-            <ImageUpload
-              value={field.value}
-              onImageChange={(info) => field.onChange(info.secure_url)}
-              uploadText="Attach a Passport"
-              editText="Change Passport"
-              uploadPreset="member_passports"
-              croppingAspectRatio={1}
-            />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-    <FormField
-      control={methods.control}
-      name="Signature"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Signature</FormLabel>
-          <FormControl>
-            <ImageUpload
-              value={field.value}
-              onImageChange={(info) => field.onChange(info.secure_url)}
-              uploadText="Attach a Signature"
-              editText="Change Signature"
-              uploadPreset="member_signatures"
-              croppingAspectRatio={3}
-            />
-          </FormControl>
-        </FormItem>
-      )}
-    />
-  </>
-);
-
-const SignatureField = ({ methods }) => (
-  <FormField
-    control={methods.control}
-    name="Signature"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>Signature</FormLabel>
-        <FormControl>
-          <SignatureCanvas
-            onSignatureChange={(url) => field.onChange(url)}
-          />
-        </FormControl>
-      </FormItem>
-    )}
-  />
-);
 
 export default MemberForm;

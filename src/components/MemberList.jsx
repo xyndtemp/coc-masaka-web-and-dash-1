@@ -5,14 +5,14 @@ import { deleteMember, getMembers, updateMember, createMember } from "../lib/air
 import MemberForm from "./MemberForm";
 import MemberView from "./MemberView";
 import { Alert, AlertDescription } from "./ui/alert";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
-import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { QRCodeSVG } from "qrcode.react";
-import { Loader2, Search } from "lucide-react";
-import { Input } from "./ui/input";
+import { Table, TableBody } from "./ui/table";
+import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
 import { debounce } from "lodash";
+import MemberTableHeader from "./members/MemberTableHeader";
+import MemberTableRow from "./members/MemberTableRow";
+import MemberSearch from "./members/MemberSearch";
 
 const MemberList = () => {
   const queryClient = useQueryClient();
@@ -92,10 +92,6 @@ const MemberList = () => {
     setSearchTerm(term);
   }, 300);
 
-  const handleSearchChange = (e) => {
-    debouncedSearch(e.target.value);
-  };
-
   const filteredMembers = members?.filter(member => 
     member.FirstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     member.LastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -106,16 +102,8 @@ const MemberList = () => {
 
   return (
     <>
-      <div className="mb-4 flex items-center">
-        <Input
-          type="text"
-          placeholder="Search members..."
-          onChange={handleSearchChange}
-          className="mr-2"
-          disabled={isLoading}
-        />
-        <Search className="text-gray-400" />
-      </div>
+      <MemberSearch onChange={handleSearchChange} disabled={isLoading} />
+      
       <div className="mb-4">
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
@@ -136,62 +124,17 @@ const MemberList = () => {
         </div>
       ) : (
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Gender</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>ID Printed</TableHead>
-              <TableHead>Passport</TableHead>
-              <TableHead>Signature</TableHead>
-              <TableHead>QR Code</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+          <MemberTableHeader />
           <TableBody>
             {filteredMembers && filteredMembers.map((member) => (
-              <TableRow key={member.id}>
-                <TableCell>{member.Gender}</TableCell>
-                <TableCell>{`${member.FirstName} ${member.LastName}`}</TableCell>
-                <TableCell>{member["ID Printed"] ? "Yes" : "No"}</TableCell>
-                <TableCell>
-                  {member.Passport && member.Passport[0] && (
-                    <img src={member.Passport[0].url} alt="Passport" className="w-10 h-10 object-cover" />
-                  )}
-                </TableCell>
-                <TableCell>
-                  {member.Signature && member.Signature[0] && (
-                    <img src={member.Signature[0].url} alt="Signature" className="w-10 h-10 object-contain bg-white" />
-                  )}
-                </TableCell>
-                <TableCell>
-                  <QRCodeSVG value={member["member ID"]} size={40} />
-                </TableCell>
-                <TableCell>
-                  <Button onClick={() => handleView(member)} variant="outline" className="mr-2">View</Button>
-                  <Button onClick={() => handleEdit(member)} variant="outline" className="mr-2">
-                    {mutations.update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Edit"}
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="destructive">
-                        {mutations.delete.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the member's data.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(member.id)}>Delete</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </TableCell>
-              </TableRow>
+              <MemberTableRow
+                key={member.id}
+                member={member}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                isDeleting={mutations.delete.isPending}
+              />
             ))}
           </TableBody>
         </Table>
