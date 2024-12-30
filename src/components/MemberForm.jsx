@@ -9,7 +9,18 @@ import SignatureCanvas from './SignatureCanvas';
 const MemberForm = ({ member, onClose, onSubmit }) => {
   const [pendingUploads, setPendingUploads] = useState({});
   const methods = useForm({
-    defaultValues: member || {
+    defaultValues: member ? {
+      ...member,
+      // Convert Cloudinary URLs back to the expected format for the form
+      'Passport': member.Passport ? [{
+        url: member.Passport,
+        filename: 'passport.png'
+      }] : null,
+      'Signature': member.Signature ? [{
+        url: member.Signature,
+        filename: 'signature.png'
+      }] : null,
+    } : {
       'member ID': '',
       'ID Printed': 'false',
       'Gender': '',
@@ -39,7 +50,10 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     // Include any pending uploads in the submission
     const formData = {
       ...data,
-      ...pendingUploads
+      ...pendingUploads,
+      // Convert the Cloudinary image data to URLs for submission
+      'Passport': data.Passport?.[0]?.url || null,
+      'Signature': data.Signature?.[0]?.url || null,
     };
 
     try {
