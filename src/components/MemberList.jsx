@@ -88,6 +88,10 @@ const MemberList = () => {
     mutations.create.mutate(data);
   };
 
+  const handleSearchChange = (e) => {
+    debouncedSearch(e.target.value);
+  };
+
   const debouncedSearch = debounce((term) => {
     setSearchTerm(term);
   }, 300);
