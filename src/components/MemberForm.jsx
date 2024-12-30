@@ -12,14 +12,32 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
     defaultValues: member ? {
       ...member,
       // Convert Cloudinary URLs back to the expected format for the form
-      'Passport': member.Passport ? [{
-        url: member.Passport,
-        filename: 'passport.png'
-      }] : null,
-      'Signature': member.Signature ? [{
-        url: member.Signature,
-        filename: 'signature.png'
-      }] : null,
+      'Passport': member.Passport ? (
+        Array.isArray(member.Passport) ? 
+          // Handle array of URLs
+          [{
+            url: member.Passport[0],
+            filename: 'passport.png'
+          }] :
+          // Handle object format
+          [{
+            url: member.Passport,
+            filename: 'passport.png'
+          }]
+      ) : null,
+      'Signature': member.Signature ? (
+        Array.isArray(member.Signature) && typeof member.Signature[0] === 'object' ?
+          // Handle array of objects (from Airtable)
+          [{
+            url: member.Signature[0].url,
+            filename: member.Signature[0].filename
+          }] :
+          // Handle string URL
+          [{
+            url: member.Signature,
+            filename: 'signature.png'
+          }]
+      ) : null,
     } : {
       'member ID': '',
       'ID Printed': 'false',
