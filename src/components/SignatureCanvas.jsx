@@ -12,21 +12,63 @@ const SignatureCanvas = ({ onSignatureChange }) => {
     sigCanvas.current.clear();
   };
 
+  const uploadToCloudinary = async (dataUrl) => {
+    try {
+      const formData = new FormData();
+      // Convert base64 to blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      formData.append('file', blob, 'signature.png');
+      formData.append('upload_preset', 'ml_default');
+
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD;
+      const uploadResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload to Cloudinary');
+      }
+
+      const data = await uploadResponse.json();
+      return data.secure_url;
+    } catch (error) {
+      console.error('Error uploading to Cloudinary:', error);
+      throw error;
+    }
+  };
+
   const save = async () => {
     if (sigCanvas.current.isEmpty()) {
-      alert("Please provide a signature first.");
+      toast({
+        title: "Please provide a signature first.",
+        variant: "destructive",
+      });
       return;
     }
-    const dataURL = sigCanvas.current.toDataURL();
+
     try {
+      const dataURL = sigCanvas.current.toDataURL();
       const cloudinaryUrl = await uploadToCloudinary(dataURL);
+      
       if (typeof onSignatureChange === "function") {
-        onSignatureChange(cloudinaryUrl);
+        onSignatureChange([{
+          url: cloudinaryUrl,
+          filename: 'signature.png'
+        }]);
       }
+      
+      toast({
+        title: "Signature saved successfully",
+      });
     } catch (error) {
       Sentry.captureException(error);
       toast({
-        title: "Failed to upload signature. Please try again.",
+        title: "Failed to save signature. Please try again.",
         variant: "destructive",
       });
     }
