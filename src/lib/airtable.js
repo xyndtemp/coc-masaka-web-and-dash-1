@@ -48,14 +48,18 @@ export const createMember = async (data) => {
     };
 
     // Handle file attachments
-    if (data.Passport) {
-      fieldsToCreate.Passport = Array.isArray(data.Passport) ? data.Passport : [data.Passport];
+    if (data.Passport && Array.isArray(data.Passport)) {
+      fieldsToCreate.Passport = data.Passport.map(attachment => ({
+        url: attachment.url,
+        filename: attachment.filename,
+      }));
     }
-    if (data.Signature) {
-      fieldsToCreate.Signature = Array.isArray(data.Signature) ? data.Signature : [data.Signature];
-    }
-    if (data.BarcodeImage) {
-      fieldsToCreate.BarcodeImage = Array.isArray(data.BarcodeImage) ? data.BarcodeImage : [data.BarcodeImage];
+    
+    if (data.Signature && Array.isArray(data.Signature)) {
+      fieldsToCreate.Signature = data.Signature.map(attachment => ({
+        url: attachment.url,
+        filename: attachment.filename,
+      }));
     }
 
     const record = await table.create(fieldsToCreate);
