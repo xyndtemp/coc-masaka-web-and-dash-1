@@ -4,7 +4,7 @@ import SignaturePad from "react-signature-canvas";
 import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 
-const SignatureCanvas = ({ onSignatureChange }) => {
+const SignatureCanvas = ({ methods }) => {
   const sigCanvas = useRef();
   const { toast } = useToast();
 
@@ -58,12 +58,11 @@ const SignatureCanvas = ({ onSignatureChange }) => {
       const dataURL = sigCanvas.current.toDataURL();
       const cloudinaryUrl = await uploadToCloudinary(dataURL);
       
-      if (typeof onSignatureChange === "function") {
-        onSignatureChange([{
-          url: cloudinaryUrl,
-          filename: 'signature.png'
-        }]);
-      }
+      // Update the form field with the signature URL
+      methods.setValue('Signature', [{
+        url: cloudinaryUrl,
+        filename: 'signature.png'
+      }]);
       
       toast({
         title: "Signature saved successfully",
