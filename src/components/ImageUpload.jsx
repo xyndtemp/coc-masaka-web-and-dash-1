@@ -31,9 +31,11 @@ const ImageUpload = ({
       // Create a temporary URL that Airtable can access
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('upload_preset', 'ml_default'); // Make sure to set this in your Cloudinary settings
       
-      // Upload to a temporary storage service (like Cloudinary or similar)
-      const response = await fetch('https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload', {
+      // Upload to Cloudinary using environment variables
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD;
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
         method: 'POST',
         body: formData
       });
