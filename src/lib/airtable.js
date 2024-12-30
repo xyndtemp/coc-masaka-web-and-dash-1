@@ -41,7 +41,23 @@ export const createMember = async (data) => {
   }
 
   try {
-    const { id, ...fieldsToCreate } = data;
+    const fieldsToCreate = {
+      ...data,
+      'member ID': data['member ID'] || uuidv4(),
+      'barcode': uuidv4(),
+    };
+
+    // Handle file attachments
+    if (data.Passport) {
+      fieldsToCreate.Passport = Array.isArray(data.Passport) ? data.Passport : [data.Passport];
+    }
+    if (data.Signature) {
+      fieldsToCreate.Signature = Array.isArray(data.Signature) ? data.Signature : [data.Signature];
+    }
+    if (data.BarcodeImage) {
+      fieldsToCreate.BarcodeImage = Array.isArray(data.BarcodeImage) ? data.BarcodeImage : [data.BarcodeImage];
+    }
+
     const record = await table.create(fieldsToCreate);
     return { id: record.id, ...record.fields };
   } catch (error) {
@@ -58,6 +74,18 @@ export const updateMember = async (id, data) => {
 
   try {
     const { id: _, ...fieldsToUpdate } = data;
+    
+    // Handle file attachments
+    if (data.Passport) {
+      fieldsToUpdate.Passport = Array.isArray(data.Passport) ? data.Passport : [data.Passport];
+    }
+    if (data.Signature) {
+      fieldsToUpdate.Signature = Array.isArray(data.Signature) ? data.Signature : [data.Signature];
+    }
+    if (data.BarcodeImage) {
+      fieldsToUpdate.BarcodeImage = Array.isArray(data.BarcodeImage) ? data.BarcodeImage : [data.BarcodeImage];
+    }
+
     const record = await table.update(id, fieldsToUpdate);
     return { id: record.id, ...record.fields };
   } catch (error) {
