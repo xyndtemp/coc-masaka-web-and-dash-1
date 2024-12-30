@@ -42,7 +42,10 @@ const SignatureCanvas = ({ onSignatureChange }) => {
     }
   };
 
-  const save = async () => {
+  const save = async (e) => {
+    e.preventDefault(); // Prevent form submission
+    e.stopPropagation(); // Stop event propagation
+    
     if (sigCanvas.current.isEmpty()) {
       toast({
         title: "Please provide a signature first.",
@@ -85,10 +88,12 @@ const SignatureCanvas = ({ onSignatureChange }) => {
         }}
       />
       <div className="mt-2 space-x-2">
-        <Button onClick={clear} variant="outline">
+        <Button onClick={clear} variant="outline" type="button">
           Clear
         </Button>
-        <Button onClick={save}>Save Signature</Button>
+        <Button onClick={save} type="button">
+          Save Signature
+        </Button>
       </div>
     </div>
   );
