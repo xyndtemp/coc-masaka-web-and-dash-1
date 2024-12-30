@@ -21,6 +21,8 @@ const MemberForm = ({ member, onClose, onSubmit }) => {
       'Address': '',
       'Nationality': '',
       'LGA': '',
+      'Date of Birth': '',
+      'Date of Baptism': '',
       'Passport': null,
       'Signature': null,
     },
