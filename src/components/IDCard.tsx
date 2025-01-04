@@ -29,8 +29,15 @@ export default function IDCard({ member }: IDCardProps) {
     <Card className="w-[85.6mm] h-[54mm] bg-white relative overflow-hidden border-2 border-[#363B97]">
       <CardContent className="p-0 h-full">
         {/* Header */}
-        <div className="p-2 space-y-1">
-          <div className="flex items-center gap-2">
+        <div className="p-2 space-y-1 relative">
+          <div className="absolute top-0 left-0 w-8 h-8">
+            <img
+              src="/coc.png"
+              alt="Church of Christ Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="flex items-center gap-2 ml-10">
             <div className="flex-1">
               <h1 className="text-[#363B97] text-sm font-bold text-center">
                 CHURCH OF CHRIST, MASAKA
@@ -54,7 +61,7 @@ export default function IDCard({ member }: IDCardProps) {
               <img
                 src={passportSrc}
                 alt="Passport"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
             </div>
 
@@ -86,7 +93,7 @@ export default function IDCard({ member }: IDCardProps) {
               <img
                 src={signatureSrc}
                 alt="Signature"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain object-center"
               />
             </div>
           </div>
