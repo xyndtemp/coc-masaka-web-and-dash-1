@@ -1,10 +1,10 @@
-import { sentryVitePlugin } from "@sentry/vite-plugin";
+// import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { fileURLToPath, URL } from "url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 import { componentTagger } from "lovable-tagger";
-import config from "./src/config/default.json";
+// import config from "./src/config/default.json";
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -15,13 +15,13 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
-    sentryVitePlugin({
-      org: "xyrus-code",
-      project: "coc-masaka-airtable",
-      release: {
-        name: `${process.env.npm_package_name}@${process.env.npm_package_version}`,
-      },
-    })
+    // sentryVitePlugin({
+    //   org: "xyrus-code",
+    //   project: "coc-masaka-airtable",
+    //   release: {
+    //     name: `${process.env.npm_package_name}@${process.env.npm_package_version}`,
+    //   },
+    // })
   ].filter(Boolean),
 
   resolve: {
