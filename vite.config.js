@@ -17,7 +17,10 @@ export default defineConfig(({ mode }) => ({
     mode === 'development' && componentTagger(),
     sentryVitePlugin({
       org: "xyrus-code",
-      project: "coc-masaka-airtable"
+      project: "coc-masaka-airtable",
+      release: {
+        name: `${process.env.npm_package_name}@${process.env.npm_package_version}`,
+      },
     })
   ].filter(Boolean),
 
