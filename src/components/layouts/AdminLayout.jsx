@@ -9,7 +9,8 @@ import {
   Radio, 
   ChevronLeft, 
   ChevronRight,
-  LogOut 
+  LogOut,
+  Printer
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ const AdminLayout = ({ children }) => {
     { icon: Calendar, label: "Attendance", path: "/admin/attendance" },
     { icon: Mic, label: "Sermons", path: "/admin/sermons" },
     { icon: Radio, label: "Radio", path: "/admin/radio" },
+    { icon: Printer, label: "Print IDs", path: "/admin/print-ids" },
   ];
 
   return (
