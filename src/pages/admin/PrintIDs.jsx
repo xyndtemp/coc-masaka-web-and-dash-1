@@ -2,66 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { getMembers } from "@/lib/airtable";
 import AdminLayout from "@/components/layouts/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Printer } from "lucide-react";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-
-const IDCard = ({ member }) => (
-  <div className="w-[85.6mm] h-[54mm] relative bg-white border border-gray-200 overflow-hidden page-break-after-always">
-    <div className="absolute top-0 left-0 w-full">
-      <img 
-        src="/lovable-uploads/c76e2659-4e13-4667-a07c-abd7d7ed7ccb.png" 
-        alt="ID Card Template" 
-        className="w-full"
-      />
-    </div>
-    
-    {/* Passport Photo Area */}
-    <div className="absolute top-[35px] left-[25px] w-[100px] h-[120px]">
-      {member.Passport && (
-        <img 
-          src={Array.isArray(member.Passport) ? member.Passport[0] : member.Passport} 
-          alt="Member Passport" 
-          className="w-full h-full object-cover"
-        />
-      )}
-    </div>
-
-    {/* Member Details */}
-    <div className="absolute top-[170px] left-[25px] text-black">
-      <p className="font-bold">{`${member.Gender} ${member.FirstName} ${member.LastName}`}</p>
-      <p className="text-sm mt-1">ID: {member['member ID']}</p>
-    </div>
-
-    {/* Signature */}
-    <div className="absolute bottom-[20px] left-[25px] w-[150px] h-[50px]">
-      {member.Signature && (
-        <img 
-          src={Array.isArray(member.Signature) && typeof member.Signature[0] === 'object' 
-            ? member.Signature[0].url 
-            : member.Signature} 
-          alt="Signature" 
-          className="w-full h-full object-contain"
-        />
-      )}
-    </div>
-
-    {/* QR Code */}
-    <div className="absolute bottom-[20px] right-[25px] w-[50px] h-[50px]">
-      {member.BarcodeImage && (
-        <img 
-          src={Array.isArray(member.BarcodeImage) && member.BarcodeImage[0]?.url 
-            ? member.BarcodeImage[0].url 
-            : member.BarcodeImage} 
-          alt="QR Code" 
-          className="w-full h-full"
-        />
-      )}
-    </div>
-  </div>
-);
+import IDCard from "@/components/IDCard";
 
 const PrintIDs = () => {
   const printRef = useRef();
@@ -107,24 +52,26 @@ const PrintIDs = () => {
         </div>
 
         {pendingIDs.length === 0 ? (
-          <Card className="p-6">
-            <p className="text-center text-gray-500">No pending ID cards to print</p>
-          </Card>
+          <div className="p-6 text-center bg-background border rounded-lg">
+            <p className="text-muted-foreground">No pending ID cards to print</p>
+          </div>
         ) : (
           <>
+            {/* Hidden printable content */}
             <div className="hidden">
-              <div ref={printRef} className="p-4">
+              <div ref={printRef} className="p-4 space-y-4">
                 {pendingIDs.map((member) => (
                   <IDCard key={member.id} member={member} />
                 ))}
               </div>
             </div>
 
+            {/* Preview grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {pendingIDs.map((member) => (
-                <Card key={member.id} className="p-4">
+                <div key={member.id} className="bg-background border rounded-lg p-4">
                   <IDCard member={member} />
-                </Card>
+                </div>
               ))}
             </div>
           </>
