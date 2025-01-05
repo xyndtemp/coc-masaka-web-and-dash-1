@@ -42,7 +42,9 @@ const Contact = () => {
                 <MapPin className="w-6 h-6 mr-4 text-primary" />
                 <div>
                   <h3 className="font-medium">Address</h3>
-                  <p className="text-gray-600">123 Church Street, Masaka, Uganda</p>
+                  <p className="text-gray-600">Jakanwa Road, after Old Abattoir, Masaka</p>
+                  <p className="text-gray-600">P.O.Box 424, Maraba</p>
+                  <p className="text-gray-600">Karu L.G. Area, Nasarawa State</p>
                 </div>
               </div>
               
